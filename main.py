@@ -23,7 +23,6 @@ def splitline_district(district):
         for bn in district.border_nodes:
             red_votes = 0
 
-            # adds data for one party
             for node in district.nodes:
                 if in_border(node.position, an.position, bn.position):
                     red_votes += node.get_people("red")

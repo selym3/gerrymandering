@@ -21,17 +21,18 @@ def splitline_district(district):
 
     for an in district.border_nodes:
         for bn in district.border_nodes:
-            red_votes = 0
+            pop_inside = 0
+            pop_outside = 0
 
             for node in district.nodes:
                 if in_border(node.position, an.position, bn.position):
-                    red_votes += node.get_people("red")
+                    pop_inside += node.get_total()
                 else:
-                    red_votes -= node.get_people("red")
+                    pop_outside += node.get_total()
 
-            if abs(red_votes) < smallest:
+            if abs(pop_outside - pop_inside) < smallest:
                 best_border = [an, bn]
-                smallest = red_votes
+                smallest = abs(pop_outside - pop_inside)
     
     return best_border
 

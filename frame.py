@@ -26,14 +26,17 @@ class Frame:
 
     def __init__(self, width: int, height: int):
         self.width, self.height = width, height
-
+        self.factor = 1
         self.buffer = np.zeros(
             shape=(height, width, Frame.CHANNELS),
             dtype=np.uint8
         )
 
     def set_color(self, col: int, row: int, color: Color) -> None:
-        self.buffer[row, col] = color
+        self.buffer[row * self.factor:(row + 1) * self.factor, col * self.factor:(col + 1) * self.factor] = color
+
+    def scale(self, factor: int):
+        self.factor = factor
 
     def image(self) -> Image:
         return Image.fromarray(self.buffer)

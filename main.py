@@ -99,6 +99,7 @@ if __name__ == "__main__":
 
     # create frame & draw district
     frame = Frame(300, 300)
+    frame.scale(50)
     draw_district(district, frame)
     # im = frame.image()
     # im.save("images/test/mk1.png")

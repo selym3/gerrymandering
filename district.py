@@ -51,7 +51,7 @@ class District:
             if curr_node.is_clockwise(insert_node):
                 self.border_nodes.append(node)
             else:
-                self.border_nodes.insert(1)
+                self.border_nodes.insert(1, node)
 
         else:
             #TODO: Logic for if the point is to the left of the leftmost point

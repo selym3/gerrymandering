@@ -17,7 +17,7 @@ def split(width, height):
     def get_node(x, y):
         n = Node(x, y)
 
-        if x < width / 2:
+        if x > width / 2:
             n.add_people(1, "red")
 
         return n

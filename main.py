@@ -53,13 +53,22 @@ def draw_state(state, frame: Frame):
     for district in state.districts:
         draw_district(district, frame)
 
-def test_thing():
+def test_input():
     frame = Frame(300, 300)
     district = District()
 
     while True:
+        print("enter x coordinate (or exit)")
         x = input()
+
+        if x == 'exit':
+            break
+
+        print("enter y coordinate (or exit)")
         y = input()
+
+        x = int(x)
+        y = int(y)
 
         district.add_border(Node(x, y))
         draw_district(district, frame)
@@ -68,7 +77,7 @@ def test_thing():
 
 
 if __name__ == "__main__":
-    
+    test_thing()
     # generate district
     district = get_district(6, 6, gen=split(6, 6))
     if False: 

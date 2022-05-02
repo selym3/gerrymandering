@@ -19,6 +19,9 @@ class Node:
             return 0
         return self.population[party]
 
+    def get_total(self):
+        return sum(self.population.values())
+
     def __str__(self):
         return f"{self.population} at {self.position}"
 

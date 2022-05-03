@@ -74,12 +74,12 @@ class District:
                     self.border_nodes.insert(i, node)
 
                     curr_node = self.border_nodes[(i + 1) % len(self.border_nodes)].position - self.border_nodes[i].position
-                    next_node = self.border_nodes[(i + 2) % len(self.border_nodes)].position - self.border_nodes[(i + 2) % len(self.border_nodes)].position
+                    next_node = self.border_nodes[(i + 2) % len(self.border_nodes)].position - self.border_nodes[(i + 1) % len(self.border_nodes)].position
 
                     while not curr_node.is_clockwise(next_node):
                         self.nodes.append(self.border_nodes.pop((i + 1) % len(self.border_nodes)))
                         curr_node = self.border_nodes[(i + 1) % len(self.border_nodes)].position - self.border_nodes[i].position
-                        next_node = self.border_nodes[(i + 2) % len(self.border_nodes)].position - self.border_nodes[(i + 2) % len(self.border_nodes)].position
+                        next_node = self.border_nodes[(i + 2) % len(self.border_nodes)].position - self.border_nodes[(i + 1) % len(self.border_nodes)].position
 
                     break
 

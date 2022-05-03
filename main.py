@@ -77,7 +77,8 @@ def test_input():
 
 
 if __name__ == "__main__":
-    test_thing()
+    # test_input()
+    
     # generate district
     district = get_district(6, 6, gen=split(6, 6))
     if False: 

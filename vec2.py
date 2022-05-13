@@ -38,5 +38,11 @@ class Vec2:
     def cross(self, rhs):
         return rhs.x * self.y - self.x * rhs.y
 
+    #vec calling is clockwise of rhs
     def is_clockwise(self, rhs):
         return self.cross(rhs) >= 0
+
+    def normal(self):
+        magnitude = self.mag()
+        return Vec2(self.x / magnitude, self.y / magnitude)
+        

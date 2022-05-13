@@ -40,7 +40,7 @@ class District:
     def add_border(self, node: Node):
         self.border_nodes.append(node)
 
-        
+    
 
     # FIRST POINT: left-most point
     def add_node(self, node: Node):
@@ -85,3 +85,40 @@ class District:
 
             if not is_border:
                 self.nodes.append(node)
+
+class State:
+    districts = []
+
+    def get_array(self):
+        border_nodes = []
+        nodes = []
+
+        endpoint = None
+
+        for district in districts:
+            border_nodes.extend(district.border_nodes)
+            nodes.extend(district.nodes)
+
+            for node in district.border_nodes:
+                if endpoint == None or node.y < endpoint.y or (node.y == endpoint.y and node.x < endpoint.x):
+                    endpoint = node
+
+        #TODO:Get edges of state
+
+        # sorted_borders = sorted(border_nodes, key=lambda x: endpoint.normal().dot((x - endpoint).normal().dot()))
+
+        edges = []
+        # edges.append(endpoint)
+
+        # for i in range(1, len(sorted_borders)):
+        #     if (sorted_borders[i] - sorted_borders[i - 1]).is_clockwise()
+
+        top_right = Vec2()
+        bottom_left = Vec2()
+
+        for node in edges:
+            top_right.x = max(top_right.x, node.x)
+            top_right.y = max(top_right.y, node.y)
+
+            bottom_left.x = min(bottom_left.x, node.x)
+            bottom_left.y = min(bottom_left.y, node.y)

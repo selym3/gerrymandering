@@ -1,6 +1,8 @@
 from frame import Frame, Vertex
 from district import District, Node
 from fake import get_district, split
+from draw import *
+
 class State:
     def __init__(self):
         self.districts = [get_district(50, 50)]
@@ -35,23 +37,6 @@ def splitline_district(district):
                 smallest = abs(pop_outside - pop_inside)
     
     return best_border
-
-def draw_district(district, frame: Frame):
-    for node in district.nodes:
-        frame.set_color(node.position.x, node.position.y, (255, 0, 0))
-    
-    for border_node in district.border_nodes:
-        frame.set_color(border_node.position.x, border_node.position.y, (255, 255, 255))
-
-    border = splitline_district(district)
-    frame.line(
-        Vertex(border[0].position, (0, 0, 255)), 
-        Vertex(border[1].position, (0, 255, 0))
-    )
-
-def draw_state(state, frame: Frame):
-    for district in state.districts:
-        draw_district(district, frame)
 
 def test_input():
     frame = Frame(300, 300)

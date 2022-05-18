@@ -114,6 +114,11 @@ struct vec2
     // OPERATORS //
     ///////////////
 
+    vec2 operator-() const
+    {
+        return vec2(-x, -y);
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const vec2& rhs)
     {
         return os << "( " << rhs.x << " , " << rhs.y << " )";

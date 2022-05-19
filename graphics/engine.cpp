@@ -2,11 +2,41 @@
 
 using namespace gl;
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
+#include <iostream>
+
 //
 
-engine::engine(unsigned int width, unsigned int height) :
-    window { sf::VideoMode(width, height), "gerrymandering", sf::Style::None }
+struct draw_rectangle : public behavior
 {
+    draw_rectangle() { }
+
+    void execute(engine& engine)
+    {
+        sf::RectangleShape rect;
+        gm::vec2d rpos{0, 0};
+        gm::vec2d rsize{10, 10};
+        rect.setPosition(engine.get_camera().world_to_screen(rpos).to<float>());
+        rect.setSize((engine.get_camera().world_to_screen(rpos + rsize) - engine.get_camera().world_to_screen(rpos)).to<float>());
+        rect.setFillColor(sf::Color::Blue);
+
+        engine.get_window().draw(rect);
+    }
+
+    void handle_event(engine& engine, const sf::Event& event) 
+    {
+    }
+
+};
+
+engine::engine(unsigned int width, unsigned int height) :
+    _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::None },
+    _camera { window{{width, height}}, window{{-5, -5}, {10 ,10}} },
+    behaviors {}
+{
+    behaviors.push_back(std::make_unique<pan_zoom>());
+    behaviors.push_back(std::make_unique<draw_rectangle>());
 }
 
 //
@@ -15,37 +45,39 @@ void engine::handle_event(const sf::Event& event)
 { 
     if (event.type == sf::Event::Closed)
     {
-        window.close();
+        _window.close();
         return;
     }
 
-
+    for (auto& behavior : behaviors) 
+        behavior->handle_event(*this, event);
 }
 
 void engine::draw()
 {
-    window.clear(sf::Color::White);
-
-    window.display();
+    _window.clear(sf::Color::White);
+for (auto& behavior : behaviors)
+        behavior->execute(*this);
+    _window.display();
 }
 
 //
 
 bool engine::is_running() const
 {
-    return window.isOpen();
+    return _window.isOpen();
 }
 
 
 void engine::execute() 
 {
     sf::Event event;
-    while (window.pollEvent(event))
+    while (_window.pollEvent(event))
     { 
         handle_event(event);
     }
 
-    draw();
+    draw(); // TODO: put behavior before end of draw loop?
 }
 
 //

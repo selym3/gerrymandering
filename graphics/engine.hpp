@@ -4,13 +4,28 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <memory>
+#include "./behavior.hpp"
+#include "./camera.hpp"
+#include "../mouse.hpp"
+
 namespace gl
 {
 
 class engine
 {
 private:
-    sf::RenderWindow window;
+    sf::RenderWindow _window;
+    camera _camera;
+    Mouse _mouse;
+
+public: 
+    camera& get_camera() { return _camera; }
+    sf::RenderWindow& get_window() { return _window; }
+    Mouse& get_mouse() { return _mouse; }
+
+private:
+    std::vector<std::unique_ptr<behavior>> behaviors;
 
 public:
     engine(unsigned int width, unsigned int height);

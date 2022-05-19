@@ -11,6 +11,88 @@ std::ostream& operator<<(std::ostream& os, const sf::Vector2<T>& rhs)
 #include "camera.hpp"
 #include "mouse.hpp"
 
+namespace gm 
+{
+
+struct engine;
+
+struct control_mode
+{
+    virtual void handle_event(const engine& engine, const sf::Event& event) = 0;
+    virtual void execute(const engine& engine) = 0;
+};
+
+struct pan_zoom : public control_mode
+{
+
+    void handle_event(const engine& engine, const sf::Event& event) 
+    {
+
+    }
+
+    void execute(const engine& engine)
+    {
+        
+    }
+
+};
+
+}
+
+namespace gm
+{
+
+struct engine
+{
+public:
+    sf::RenderWindow window;
+
+    engine() :
+        window { sf::VideoMode(640, 480), "gerrymandering", sf::Style::None }
+    {
+    }
+
+public:
+    void handle_event(const sf::Event& event) 
+    {
+        if (event.type == sf::Event::Closed) 
+        {
+            window.close();
+            return;
+        }
+
+
+    }
+
+public:
+    bool is_open() const { return window.isOpen(); }
+    
+    void update() 
+    {
+        sf::Event event;
+        while (window.pollEvent(event)) 
+        {
+            handle_event(event);
+        }
+
+
+    }
+};
+
+}
+
+int main2() 
+{
+    gm::engine engine;
+
+    while (engine.is_open())
+    {
+        engine.update(); 
+    }
+
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
     sf::RenderWindow window 

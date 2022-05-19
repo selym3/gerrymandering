@@ -2,3 +2,4 @@ images/test
 __pycache__/
 main
 .vscode/
+bin/

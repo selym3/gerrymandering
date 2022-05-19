@@ -1,7 +1,7 @@
 #ifndef __CAMERA_HPP__
 #define __CAMERA_HPP__
 
-#include "../vec2.hpp"
+#include "../util/vec2.hpp"
 
 namespace gl
 {

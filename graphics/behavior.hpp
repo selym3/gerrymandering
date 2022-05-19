@@ -4,7 +4,7 @@
 #include <SFML/Window/Event.hpp>
 
 // #include "./engine.hpp"
-#include "../vec2.hpp"
+#include "../util/vec2.hpp"
 
 namespace gl
 {

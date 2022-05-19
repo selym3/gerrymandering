@@ -1,7 +1,7 @@
 #include "./behavior.hpp"
 #include <SFML/Window/Mouse.hpp>
 
-#include "../vec2.hpp"
+#include "../util/vec2.hpp"
 #include "./engine.hpp"
 // #include "./camera.hpp"
 

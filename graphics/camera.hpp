@@ -53,6 +53,16 @@ struct camera
     {
     }
 
+    camera(const window& screen) 
+        : camera(screen, screen)
+    {
+    }
+
+    camera(const gm::vec2d& size)
+        : camera(window{size})
+    {
+    }
+
     gm::vec2d screen_to_world(const gm::vec2d& in_screen) const
     {
         return screen.map_to(in_screen, world);

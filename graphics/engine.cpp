@@ -32,11 +32,16 @@ struct draw_rectangle : public behavior
 
 engine::engine(unsigned int width, unsigned int height) :
     _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::None },
-    _camera { window{{width, height}}, window{{-5, -5}, {10 ,10}} },
+    _camera { window{width, height} },
     behaviors {}
 {
     behaviors.push_back(std::make_unique<pan_zoom>());
-    behaviors.push_back(std::make_unique<draw_rectangle>());
+}
+
+engine& engine::add_behavior(std::unique_ptr<behavior>&& bhv)
+{
+    behaviors.push_back(std::move(bhv)); 
+    return *this; 
 }
 
 //
@@ -56,8 +61,8 @@ void engine::handle_event(const sf::Event& event)
 void engine::draw()
 {
     _window.clear(sf::Color::White);
-for (auto& behavior : behaviors)
-        behavior->execute(*this);
+    for (auto& behavior : behaviors)
+            behavior->execute(*this);
     _window.display();
 }
 
@@ -77,7 +82,7 @@ void engine::execute()
         handle_event(event);
     }
 
-    draw(); // TODO: put behavior before end of draw loop?
+    draw();
 }
 
 //

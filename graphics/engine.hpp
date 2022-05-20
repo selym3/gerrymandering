@@ -28,6 +28,9 @@ private:
     std::vector<std::unique_ptr<behavior>> behaviors;
 
 public:
+    engine& add_behavior(std::unique_ptr<behavior>&& bhv);
+    
+public:
     engine(unsigned int width, unsigned int height);
 
 private:

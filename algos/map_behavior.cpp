@@ -3,11 +3,15 @@
 using namespace gm;
 using namespace gl;
 
+#include "../util/Random.hpp"
+
 #include "../graphics/engine.hpp"
 #include <SFML/Graphics.hpp>
 
 map_behavior::map_behavior() :
-    _map { 100, 100 }
+    _map { map::from_rectangle(100, 100) }, 
+    districts { 3 },
+    district_colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
 {
 }
 
@@ -17,12 +21,8 @@ void map_behavior::execute(engine& e)
     for (const auto& n : _map.nodes)
     {
         sf::Color color = sf::Color::Black;
-        switch (n.party)
-        {
-            case 0: color = sf::Color::Red;   break;
-            case 1: color = sf::Color::Green; break;
-            case 2: color = sf::Color::Blue;  break;
-        }
+        if (n.party >= 0 && n.party < districts) 
+            color = district_colors[n.party];
 
         vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({n.pos.x, n.pos.y}).to<float>(), color));
         vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({n.pos.x, n.pos.y-1}).to<float>(), color));
@@ -39,7 +39,7 @@ void map_behavior::handle_event(engine& e, const sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Q) 
         {
-            _map.randomize(3);
+            _map.randomize(districts);
         }
     }
 }

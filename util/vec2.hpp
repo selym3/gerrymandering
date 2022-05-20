@@ -52,7 +52,7 @@ struct vec2
     // VECTOR MATH //
     /////////////////
 
-    T dot(const vec2& rhs)
+    T dot(const vec2& rhs) const
     {
         return x * rhs.x + y * rhs.y;
     }
@@ -60,6 +60,11 @@ struct vec2
     T length() const
     {
         return std::hypot(x, y);
+    }
+
+    T distance(const vec2& rhs) const
+    {
+        return std::hypot(x - rhs.x , y - rhs.y );
     }
 
     ////////////////

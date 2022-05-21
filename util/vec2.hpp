@@ -11,6 +11,11 @@ namespace gm
 template <typename T>
 struct vec2
 {
+    ///////////
+    // TYPES //
+    ///////////
+    using value = T;
+
     //////////
     // DATA //
     //////////
@@ -57,12 +62,12 @@ struct vec2
         return x * rhs.x + y * rhs.y;
     }
 
-    T length() const
+    double length() const
     {
         return std::hypot(x, y);
     }
 
-    T distance(const vec2& rhs) const
+    double distance(const vec2& rhs) const
     {
         return std::hypot(x - rhs.x , y - rhs.y );
     }
@@ -139,10 +144,10 @@ struct vec2
 template <typename T, std::enable_if_t<std::is_integral<T>::value, bool> = true>
 struct vec2_hash
 {
-    std::size_t operator()(const vec2<T>& t)
+    std::size_t operator()(const vec2<T>& t) const
     { 
-        return std::hash<T>(t.x) << std::numeric_limits<T>::digits
-             + std::hash<T>(t.y);
+        return t.x << std::numeric_limits<T>::digits
+             + t.y;
     }
 };
 

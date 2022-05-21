@@ -1,5 +1,5 @@
-#ifndef __MODE_HPP__
-#define __MODE_HPP__
+#ifndef __BEHAVIOR_HPP__
+#define __BEHAVIOR_HPP__
 
 #include <SFML/Window/Event.hpp>
 

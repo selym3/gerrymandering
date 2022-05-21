@@ -1,14 +1,19 @@
 
 
+CC := clang++ -std=c++17
+WW := -Wall -Wextra -Wconversion
+LL := -lsfml-system -lsfml-graphics -lsfml-window
 
+COMPILER := $(CC) $(WW)
+LINKED := $(COMPILER) $(LL)
 
 compile:
-	clang++ -std=c++17 -c graphics/engine.cpp -o bin/engine.o
-	clang++ -std=c++17 -c graphics/behavior.cpp -o bin/behavior.o
-	clang++ -std=c++17 -c algos/map_behavior.cpp -o bin/map_behavior.o
-	clang++ -std=c++17 -c algos/map.cpp -o bin/map.o
+	$(COMPILER) -c graphics/engine.cpp -o bin/engine.o
+	$(COMPILER) -c graphics/behavior.cpp -o bin/behavior.o
+	$(COMPILER) -c algos/map_behavior.cpp -o bin/map_behavior.o
+	$(COMPILER) -c algos/map.cpp -o bin/map.o
 
-	clang++ -std=c++17 main.cpp bin/*.o -o bin/main -lsfml-system -lsfml-graphics -lsfml-window
+	$(LINKED) main.cpp bin/*.o -o bin/main
 
 run: compile
 	./bin/main

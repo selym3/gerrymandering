@@ -124,11 +124,26 @@ struct vec2
         return vec2(-x, -y);
     }
 
+    bool operator==(const vec2& rhs) const
+    { 
+        return x == rhs.x && y == rhs.y; 
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const vec2& rhs)
     {
         return os << "( " << rhs.x << " , " << rhs.y << " )";
     }
 
+};
+
+template <typename T, std::enable_if_t<std::is_integral<T>::value, bool> = true>
+struct vec2_hash
+{
+    std::size_t operator()(const vec2<T>& t)
+    { 
+        return std::hash<T>(t.x) << std::numeric_limits<T>::digits
+             + std::hash<T>(t.y);
+    }
 };
 
 using vec2d = vec2<double>;

@@ -1,7 +1,7 @@
 
 
 CC := clang++ -std=c++17
-WW := -Wall -Wextra -Wconversion
+WW := # -Wall -Wextra -Wconversion
 LL := -lsfml-system -lsfml-graphics -lsfml-window
 
 COMPILER := $(CC) $(WW)

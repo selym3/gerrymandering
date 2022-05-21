@@ -9,7 +9,7 @@
 namespace gl
 {
 
-struct engine;
+class engine;
 
 struct behavior
 {

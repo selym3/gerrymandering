@@ -6,7 +6,6 @@ map map::from_rectangle(int width, int height)
 {
     map _m;
 
-    auto rnd = Random::getEngine<int>(0, 3);
     for (int i = 0; i < height; ++i)
     {
         for (int j = 0; j < width; ++j)
@@ -24,7 +23,7 @@ map::map(const std::vector<node> &nodes) : nodes{nodes}
 void map::randomize(int districts)
 {
     std::vector<node> centroids;
-    auto rnd = Random::getEngine<int>(0, nodes.size());
+    auto rnd = Random::getEngine<std::size_t>(0, nodes.size());
     for (int i = 0; i < districts; ++i)
     {
         auto j = rnd();

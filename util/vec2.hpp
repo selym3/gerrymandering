@@ -141,18 +141,18 @@ struct vec2
 
 };
 
-template <typename T, std::enable_if_t<std::is_integral<T>::value, bool> = true>
-struct vec2_hash
+using vec2d = vec2<double>;
+using vec2i = vec2<int>;
+
+
+struct vec2i_hash
 {
-    std::size_t operator()(const vec2<T>& t) const
+    std::size_t operator()(const vec2i& t) const
     { 
-        return t.x << std::numeric_limits<T>::digits
-             + t.y;
+        return (static_cast<std::size_t>(t.x) << 32) | t.y;
     }
 };
 
-using vec2d = vec2<double>;
-using vec2i = vec2<int>;
 
 }
 

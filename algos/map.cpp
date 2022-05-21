@@ -38,12 +38,6 @@ void map::randomize(int districts)
 
         for (const auto &centroid : centroids)
         {
-            if (&centroid == &node)
-            {
-                min_party = -1;
-                break;
-            }
-
             double distance = node.pos.distance(centroid.pos);
             if (distance < min_distance)
             {

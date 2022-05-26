@@ -10,8 +10,8 @@ LINKED := $(COMPILER) $(LL)
 compile:
 	$(COMPILER) -c graphics/engine.cpp -o bin/engine.o
 	$(COMPILER) -c graphics/behavior.cpp -o bin/behavior.o
-	$(COMPILER) -c algos/map_behavior.cpp -o bin/map_behavior.o
-	$(COMPILER) -c algos/map.cpp -o bin/map.o
+	$(COMPILER) -c algos/simple_map_behavior.cpp -o bin/simple_map_behavior.o
+	$(COMPILER) -c algos/simple_map.cpp -o bin/simple_map.o
 
 	$(LINKED) main.cpp bin/*.o -o bin/main
 

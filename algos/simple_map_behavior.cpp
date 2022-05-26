@@ -1,4 +1,4 @@
-#include "./map_behavior.hpp"
+#include "./simple_map_behavior.hpp"
 
 using namespace gm;
 using namespace gl;
@@ -9,7 +9,7 @@ using namespace gl;
 #include <SFML/Graphics.hpp>
 
 map_behavior::map_behavior() :
-    _map { map::from_rectangle(100, 100) }, 
+    _map { simple_map::from_rectangle(100, 100) }, 
     districts { 3 },
     district_colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
 {

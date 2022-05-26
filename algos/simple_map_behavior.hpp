@@ -2,7 +2,7 @@
 #define __MAP_BEHAVIOR_HPP__
 
 #include "../graphics/behavior.hpp"
-#include "./map.hpp"
+#include "./simple_map.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 
@@ -11,7 +11,7 @@ namespace gm
 
 struct map_behavior : public gl::behavior 
 {
-    map _map;
+    simple_map _map;
 
     int districts;
     std::vector<sf::Color> district_colors;

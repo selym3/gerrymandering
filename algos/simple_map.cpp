@@ -1,10 +1,10 @@
-#include "./map.hpp"
+#include "./simple_map.hpp"
 
 using namespace gm;
 
-map map::from_rectangle(int width, int height)
+simple_map simple_map::from_rectangle(int width, int height)
 {
-    map _m;
+    simple_map _m;
 
     for (int i = 0; i < height; ++i)
     {
@@ -16,11 +16,11 @@ map map::from_rectangle(int width, int height)
     return _m;
 }
 
-map::map(const std::vector<node> &nodes) : nodes{nodes}
+simple_map::simple_map(const std::vector<node> &nodes) : nodes{nodes}
 {
 }
 
-void map::randomize(int districts)
+void simple_map::randomize(int districts)
 {
     std::vector<node> centroids;
     auto rnd = Random::getEngine<std::size_t>(0, nodes.size());

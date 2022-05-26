@@ -9,7 +9,7 @@
 namespace gm
 {
 
-struct map_behavior : public gl::behavior 
+struct simple_map_behavior : public gl::behavior 
 {
     simple_map _map;
 
@@ -19,7 +19,7 @@ struct map_behavior : public gl::behavior
     void execute(gl::engine& en);
     void handle_event(gl::engine& en, const sf::Event& event);
 
-    map_behavior();
+    simple_map_behavior();
 };
 
 }

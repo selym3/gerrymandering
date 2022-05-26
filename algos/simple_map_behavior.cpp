@@ -8,14 +8,14 @@ using namespace gl;
 #include "../graphics/engine.hpp"
 #include <SFML/Graphics.hpp>
 
-map_behavior::map_behavior() :
+simple_map_behavior::simple_map_behavior() :
     _map { simple_map::from_rectangle(100, 100) }, 
     districts { 3 },
     district_colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
 {
 }
 
-void map_behavior::execute(engine& e)
+void simple_map_behavior::execute(engine& e)
 {
     std::vector<sf::Vertex> vertices;
     for (const auto& n : _map.nodes)
@@ -33,7 +33,7 @@ void map_behavior::execute(engine& e)
     e.get_window().draw(vertices.data(), vertices.size(), sf::Quads);
 }
 
-void map_behavior::handle_event(engine& e, const sf::Event& event)
+void simple_map_behavior::handle_event(engine& e, const sf::Event& event)
 {
     if (event.type == sf::Event::KeyPressed)
     {

@@ -19,10 +19,10 @@ MapBehavior::MapBehavior(int districts) :
 void MapBehavior::execute(engine& e)
 {
     std::vector<sf::Vertex> vertices;
-    for (const auto &[pos, n] : map.get_nodes())
+    for (const auto &[pos, n] : map.get_node_map())
     {
         sf::Color color = sf::Color{100, 100, 100};
-        if (show_borders && map.is_border(n))
+        if (show_borders && map.is_border(pos))
             color = sf::Color::Black;
         else if (n.district >= 0 && n.district < districts)
             color = colors[n.district];

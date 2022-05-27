@@ -22,7 +22,7 @@ namespace gm
     {
         int district;
         bool border;
-        int pop;
+        int pop = 0;
     };
 
     struct Map
@@ -86,15 +86,15 @@ namespace gm
             std::vector<vec2i> centroids;
             auto rng = Random::getEngine(std::size_t{}, points.size());
 
-            auto pop_rng = Random::getEngine<int>(0, 2);
-            for (auto &[pos, node] : node_map)
-            {
-                node.pop = 5; /* pop_rng(); */
-            }
-            for (auto &[pos, node] : node_map)
-            {
-                total_pop += node.pop;
-            }
+            // auto pop_rng = Random::getEngine<int>(0, 2);
+            // for (auto &[pos, node] : node_map)
+            // {
+            //     node.pop = 5; /* pop_rng(); */
+            // }
+            // for (auto &[pos, node] : node_map)
+            // {
+            //     total_pop += node.pop;
+            // }
 
             for (int i = 0; i < districts; ++i)
             {
@@ -103,6 +103,9 @@ namespace gm
 
                 centroids.push_back(centroid);
             }
+
+
+            for (int i = 0; i < districts; ++i) population[i] = 0.0;
 
             // iterate through all other
             for (auto &[pos, node] : node_map)
@@ -127,6 +130,12 @@ namespace gm
 
                 if (min_district >= 0)
                 {
+                    if (min_district == 0) {
+                    // auto pop_rng = Random::getEngine<int>(0, 2);
+                    node.pop = 5;
+                    total_pop += node.pop;
+                    }
+
                     node.district = min_district;
                     population[node.district] += node.pop;
                 }
@@ -212,7 +221,7 @@ namespace gm
             if (d == border_node.district)
                 return; // do nothing
 
-            std::cout << "Changing " << border_point << " from " << border_node.district << " to " << d << "\n";
+            // std::cout << "Changing " << border_point << " from " << border_node.district << " to " << d << "\n";
             if (percent_error[d] < percent_error[border_node.district]) {
                 border_node.district = d;
                 population[d] += border_node.pop;

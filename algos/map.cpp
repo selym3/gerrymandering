@@ -77,8 +77,7 @@ Node& Map::get_random_node()
 // }
 
 // Borders //
-
-bool Map::is_border(const vec2i& v) const
+bool Map::calculate_border(const vec2i& v) const
 {
     auto node = node_map.find(v);
     if (node == node_map.end()) return false;
@@ -93,6 +92,47 @@ bool Map::is_border(const vec2i& v) const
         }
     }
     return false;
+}
+
+
+void Map::add_border_one(const vec2i& v)
+{
+    bool was_inserted = border_set.insert(v).second;
+    if (was_inserted) border_layout.push_back(v);
+}
+
+void Map::remove_border_one(const vec2i& v)
+{
+    bool was_removed = border_set.erase(v) > 0;
+    
+    if (!was_removed) return;
+    
+    // search for vector to remove it from layout vector
+    auto it = border_layout.begin();
+    for (; it != border_layout.end(); ++it)
+        if (*it == v) break;
+    border_layout.erase(it);
+}
+
+void Map::update_border_one(const vec2i& v)
+{
+    if (calculate_border(v)) 
+        add_border_one(v);
+    else
+        remove_border_one(v);
+}
+
+void Map::update_border(const vec2i& v)
+{
+    update_border_one(v);
+    
+    for (const auto& to_neighbor : to_neighbors)
+        update_border_one(v + to_neighbor);
+}
+
+bool Map::is_border(const vec2i& v) const
+{
+    return border_set.find(v) != border_set.end();
 }
 
 std::unordered_set<District> Map::get_neighboring_districts(const vec2i& v) const
@@ -145,11 +185,8 @@ void Map::find_borders()
 
     for (const auto &pos : node_layout)
     {
-        if (is_border(pos))
-        {
-            border_layout.push_back(pos);
-            border_set.insert(pos);
-        }
+        if (calculate_border(pos))
+            add_border_one(pos);
     }
 }
 
@@ -161,19 +198,23 @@ void Map::reset(int districts)
 
 // Evolution //
 
-void Map::update_border(const vec2i& v)
+void Map::evolve(const vec2i& v)
 {
     auto districts = get_neighboring_districts(v);
     Node& node = node_map[v];
 
     for (District district : districts) 
     {
+        if (district == node.district) continue;
 
+        
+        
+        break;
     }
 
 }
 
-void Map::update_border() 
+void Map::evolve() 
 {
-    update_border(get_random_node_location());
+    evolve(get_random_node_location());
 }

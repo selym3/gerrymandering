@@ -54,9 +54,30 @@ private:
     std::unordered_set<vec2i, vec2i_hash> border_set;
     std::vector<vec2i> border_layout;
 
+private:
+
+    // determines from the surrounding districts whether or not 
+    // the node at pos is a border. can be used to update border 
+    // and layout and to keep it in sync as it needs to be changed.
+    bool calculate_border(const vec2i& pos) const;
+
+    // adds the pos to the border set and layout (no effect if already added)
+    void add_border_one(const vec2i& pos);
+
+    // removes the pos from the border set and layout (no effect if not in border set)
+    void remove_border_one(const vec2i& pos);
+
+    // if this pos is a border, adds to the border set and layout.
+    // otherwise, it removes the pos from the border set and layout.
+    void update_border_one(const vec2i& pos);
+
+    // updates the pos and surrounding neighbors whose neighbor status
+    // may have changed as a result of pos changing
+    void update_border(const vec2i& pos);
+
+
 public: 
     bool is_border(const vec2i& pos) const;
-    void remove_border(const vec2i& pos);
 
     std::unordered_set<District> get_neighboring_districts(const vec2i& v) const;
 
@@ -90,7 +111,7 @@ public:
  *************/ 
 
 private:
-    void update_border(const vec2i& v);
+    void evolve(const vec2i& v);
 
 public:
 
@@ -100,7 +121,7 @@ public:
      * - calculate fairness before and after flipping it to a neighbor
      * - remove node from border if it is flipped
      */
-    void update_border();
+    void evolve();
 
 };
 

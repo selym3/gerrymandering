@@ -50,7 +50,7 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         }
         else if (event.key.code == sf::Keyboard::E) 
         {
-            map.update_border();
+            map.evolve();
         }
     }
 }

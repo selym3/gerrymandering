@@ -40,7 +40,7 @@ namespace Random
         template <typename T>
         T next(const T &min, const T &max) const
         {
-            return T{(next() * (max - min)) + min};
+            return static_cast<T>((next() * (max - min)) + min);
         }
 
         // template <std::input_or_output_iterator Iter>

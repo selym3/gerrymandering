@@ -12,7 +12,7 @@ using namespace gl;
 
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(100, 100) }, 
-    districts { 3 },
+    districts { districts },
     colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
 {
 }

@@ -7,6 +7,8 @@
 
 using namespace gl;
 
+behavior::~behavior() { }
+
 pan_zoom::pan_zoom() : anchor { 0.0, 0.0 }
 {
 }

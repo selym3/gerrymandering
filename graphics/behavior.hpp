@@ -16,7 +16,7 @@ struct behavior
     virtual void handle_event(engine& engine, const sf::Event& event) = 0;
     virtual void execute(engine& engine) = 0;
 
-    virtual ~behavior() {}
+    virtual ~behavior();
 };
 
 struct pan_zoom : public behavior
@@ -31,7 +31,6 @@ public:
 private:
     gm::vec2d anchor;
 };
-
 }
 
 #endif

@@ -40,7 +40,7 @@ Mouse& engine::get_mouse() { return _mouse; }
 const Mouse& engine::get_mouse() const { return _mouse; }
 
 engine::engine(unsigned int width, unsigned int height) :
-    _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::None },
+    _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::Default },
     _camera { window{width, height} },
     behaviors {}
 {

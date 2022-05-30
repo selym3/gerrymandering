@@ -93,7 +93,7 @@ public:
 
         Node moved = node;
         moved.district = district;
-        add_node(pos, node);
+        add_node(pos, moved);
         return old_district;
     }
 

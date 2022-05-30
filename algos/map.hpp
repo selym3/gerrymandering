@@ -14,17 +14,24 @@
 
 namespace gm
 {
+    
+using District = int;
 
 struct Node
 {
-    int district;
+    District district;
     int population;
 };
 
 struct Map
 {
 
-    Random::Engine random;
+/*********
+ * UTILS *
+ *********/ 
+private:
+    const Random::Engine random;
+    const std::vector<vec2i> to_neighbors;
 
 /*********
  * NODES *
@@ -32,6 +39,10 @@ struct Map
 private:
     std::unordered_map<vec2i, Node, vec2i_hash> node_map;
     std::vector<vec2i> node_layout;
+
+private:
+    const vec2i& get_random_node_location() const;
+    Node& get_random_node();
 
 public:
     bool has_node(const vec2i& v) const;
@@ -41,6 +52,8 @@ public:
     // std::optional<std::reference_wrapper<Node>> get_node(const vec2i& v);
     // std::optional<std::reference_wrapper<const Node>> get_node(const vec2i& v) const;
 
+    // std::vector<std::reference_wrapper<const Node>> get_neighbors(const vec2i& v) const;
+
 /***********
  * BORDERS *
  ***********/
@@ -48,10 +61,10 @@ private:
     std::unordered_set<vec2i, vec2i_hash> border_set;
     std::vector<vec2i> border_layout;
 
-    const std::vector<vec2i> to_neighbors;
-
 public: 
     bool is_border(const vec2i& location) const;
+
+    std::unordered_set<District> get_neighboring_districts(const vec2i& v) const;
 
 /*******************
  * FACTORY METHODS *
@@ -69,6 +82,8 @@ protected:
  ******************/ 
 
 private:
+    // District get_district(int index) const;
+
     void randomize(int districts);
     void find_borders();
 
@@ -80,11 +95,20 @@ public:
  * EVOLUTION *
  *************/ 
 
+private:
+    void update_border(const vec2i& v);
+
 public:
+
+    /**
+     * - grab a random border node
+     * - get that nodes neighboring districts
+     * - calculate fairness before and after flipping it to a neighbor
+     * - remove node from border if it is flipped
+     */
     void update_border();
 
 };
-
 
 
 }

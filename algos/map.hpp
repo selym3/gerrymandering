@@ -103,6 +103,7 @@ private:
     // District get_district(int index) const;
 
     void randomize(int districts);
+public: 
     void find_borders();
 
 public:

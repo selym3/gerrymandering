@@ -3,11 +3,12 @@
 using namespace gm;
 using namespace gl;
 
-
 #include "../util/Random.hpp"
 
 #include "../graphics/engine.hpp"
 #include <SFML/Graphics.hpp>
+
+#include <iostream>
 
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(100, 100) }, 
@@ -16,9 +17,24 @@ MapBehavior::MapBehavior(int districts) :
 {
 }
 
+void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const vec2i& pos, sf::Color color, bool loop) const
+{
+    vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y}).to<float>(), color));
+    vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y - 1}).to<float>(), color));
+    vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x + 1, pos.y - 1}).to<float>(), color));
+    vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x + 1, pos.y}).to<float>(), color));
+    if (loop)
+        vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y}).to<float>(), color));
+}
+
 void MapBehavior::execute(engine& e)
 {
-    std::vector<sf::Vertex> vertices;
+    // fast evolve (change to a toggle)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+       map.evolve();
+
+    // draw the entire map
+    std::vector<sf::Vertex> cells;
     for (const auto &[pos, n] : map.get_node_map())
     {
         sf::Color color = sf::Color{100, 100, 100};
@@ -27,13 +43,16 @@ void MapBehavior::execute(engine& e)
         else if (n.district >= 0 && n.district < districts)
             color = colors[n.district];
 
-        vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y}).to<float>(), color));
-        vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y - 1}).to<float>(), color));
-        vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x + 1, pos.y - 1}).to<float>(), color));
-        vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x + 1, pos.y}).to<float>(), color));
+        draw_cell(e, cells, pos, color);
     }
+    e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 
-    e.get_window().draw(vertices.data(), vertices.size(), sf::Quads);
+    // draw the hovered cell
+    std::vector<sf::Vertex> hovered;
+    vec2d mouse_world = e.get_camera().screen_to_world(vec2d::from(sf::Mouse::getPosition(e.get_window())));
+    vec2i mouse_cell { static_cast<int>(mouse_world.x), static_cast<int>(mouse_world.y + 1) };
+    if (map.has_node(mouse_cell)) draw_cell(e, hovered, mouse_cell, sf::Color::Black, true);
+    e.get_window().draw(hovered.data(), hovered.size(), sf::LineStrip);
 }
 
 void MapBehavior::handle_event(engine& e, const sf::Event& event)
@@ -51,6 +70,10 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         else if (event.key.code == sf::Keyboard::E) 
         {
             map.evolve();
+        }
+        else if (event.key.code == sf::Keyboard::R) 
+        {
+            map.find_borders();
         }
     }
 }

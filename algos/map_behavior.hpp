@@ -4,10 +4,15 @@
 #include "./map.hpp"
 #include "../graphics/behavior.hpp"
 
+#include <SFML/Graphics/Color.hpp>
 #include <vector>
+
+namespace gm
+{
 
 struct MapBehavior : public gl::behavior
 {
+private:
     Map map;
     int districts;
 
@@ -15,10 +20,13 @@ struct MapBehavior : public gl::behavior
 
     bool show_borders;
 
-    MapBehavior(int districts = 3);
+public:
+    MapBehavior(int districts);
 
     void handle_event(gl::engine&, const sf::Event&);
     void execute(gl::engine&);
 };
+
+}
 
 #endif

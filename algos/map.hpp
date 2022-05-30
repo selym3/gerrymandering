@@ -11,18 +11,11 @@
 #include <optional>   // optional
 #include <functional> // reference_wrapper
 
+#include "./node.hpp"
 
 namespace gm
 {
     
-using District = int;
-
-struct Node
-{
-    District district;
-    int population;
-};
-
 struct Map
 {
 
@@ -62,7 +55,8 @@ private:
     std::vector<vec2i> border_layout;
 
 public: 
-    bool is_border(const vec2i& location) const;
+    bool is_border(const vec2i& pos) const;
+    void remove_border(const vec2i& pos);
 
     std::unordered_set<District> get_neighboring_districts(const vec2i& v) const;
 

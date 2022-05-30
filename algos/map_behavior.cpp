@@ -27,6 +27,13 @@ void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const 
         vertices.push_back(sf::Vertex(e.get_camera().world_to_screen({pos.x, pos.y}).to<float>(), color));
 }
 
+vec2i MapBehavior::get_mouse_cell(const engine& e) const
+{
+    vec2d mouse_world = e.get_camera().screen_to_world(vec2d::from(sf::Mouse::getPosition(e.get_window())));
+    vec2i mouse_cell { static_cast<int>(mouse_world.x), static_cast<int>(mouse_world.y + 1) };
+    return mouse_cell;
+}
+
 void MapBehavior::execute(engine& e)
 {
     // fast evolve (change to a toggle)
@@ -49,8 +56,7 @@ void MapBehavior::execute(engine& e)
 
     // draw the hovered cell
     std::vector<sf::Vertex> hovered;
-    vec2d mouse_world = e.get_camera().screen_to_world(vec2d::from(sf::Mouse::getPosition(e.get_window())));
-    vec2i mouse_cell { static_cast<int>(mouse_world.x), static_cast<int>(mouse_world.y + 1) };
+    vec2i mouse_cell = get_mouse_cell(e);
     if (map.has_node(mouse_cell)) draw_cell(e, hovered, mouse_cell, sf::Color::Black, true);
     e.get_window().draw(hovered.data(), hovered.size(), sf::LineStrip);
 }
@@ -74,6 +80,34 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         else if (event.key.code == sf::Keyboard::R) 
         {
             map.find_borders();
+        }
+    }
+
+    else if (event.type == sf::Event::MouseButtonPressed)
+    {
+        auto pos = get_mouse_cell(e);
+        auto node = map.get_node(pos);
+
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            return;
+
+        auto btn = event.mouseButton.button;
+        if (btn == sf::Mouse::Left)
+        {
+            if (node.has_value())
+            {
+                node->get().district++;
+                node->get().district %= districts;
+
+                map.update_border(pos);
+            }
+        }
+        else if (btn == sf::Mouse::Right)
+        {
+            if (node.has_value())
+            {
+                map.evolve(pos);
+            }
         }
     }
 }

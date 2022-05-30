@@ -42,8 +42,9 @@ public:
     bool has_node(const vec2i& v) const;
     bool add_node(const vec2i& v, const Node& node);
     const std::unordered_map<vec2i, Node, vec2i_hash>& get_node_map() const;
+    // std::unordered_map<vec2i, Node, vec2i_hash>& get_node_map();
 
-    // std::optional<std::reference_wrapper<Node>> get_node(const vec2i& v);
+    std::optional<std::reference_wrapper<Node>> get_node(const vec2i& v);
     // std::optional<std::reference_wrapper<const Node>> get_node(const vec2i& v) const;
 
     // std::vector<std::reference_wrapper<const Node>> get_neighbors(const vec2i& v) const;
@@ -74,7 +75,7 @@ private:
 
     // updates the pos and surrounding neighbors whose neighbor status
     // may have changed as a result of pos changing
-    void update_border(const vec2i& pos);
+ public:   void update_border(const vec2i& pos);
 
 private:
     const vec2i& get_random_border_location() const;
@@ -103,11 +104,12 @@ private:
     // District get_district(int index) const;
 
     void randomize(int districts);
-public: 
+public: // temporarily, for testing border updating
     void find_borders();
 
 public:
     void reset(int districts);
+    // void assign_nearest(const std::vector<vec2i>& centroids);
 
 
 /*************
@@ -115,8 +117,9 @@ public:
  *************/ 
 
 private:
-    BiasedMetric metric;
+    NoMetric metric;
 
+public:
     void evolve(const vec2i& v);
 
 public:

@@ -23,6 +23,8 @@ private:
 
     void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
 
+    vec2i get_mouse_cell(const gl::engine&) const;
+
 public:
     MapBehavior(int districts);
 

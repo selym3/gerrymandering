@@ -48,12 +48,15 @@ const std::unordered_map<vec2i, Node, vec2i_hash>& Map::get_node_map() const { r
 //     return std::cref(iter->second);
 // }
 
-// std::optional<std::reference_wrapper<Node>> Map::get_node(const vec2i& v)
-// {
-//     auto iter = node_map.find(v); // vec2i, Node
-//     if (iter == node_map.end()) return std::nullopt;
-//     return std::ref(iter->second);
-// }
+std::optional<std::reference_wrapper<Node>> Map::get_node(const vec2i& v)
+{
+    auto iter = node_map.find(v); // vec2i, Node
+    if (iter == node_map.end()) return std::nullopt;
+    return std::ref(iter->second);
+
+//    if (!has_node(v)) return std::nullopt;
+//    return node_map[v];
+}
 
 const vec2i& Map::get_random_node_location() const 
 {

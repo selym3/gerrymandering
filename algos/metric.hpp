@@ -54,7 +54,7 @@ struct BiasedMetric
 {
     bool analyze(const vec2i& pos, const Node& node, District district)
     {
-        return district == 0;
+        return node.district < district;
     }
 };
 

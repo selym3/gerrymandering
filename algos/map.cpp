@@ -19,7 +19,7 @@ Map Map::make_grid(int width, int height)
     {
         for (int x = 0; x < width; ++x)
         {
-            map.add_node(vec2i{x, y}, Node{ 0, 0 });
+            map.add_node(vec2i{x, y}, Node{ -1, 0 });
         }
     }
 

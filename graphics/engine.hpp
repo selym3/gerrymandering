@@ -21,8 +21,13 @@ private:
 
 public: 
     camera& get_camera();
+    const camera& get_camera() const;
+
     sf::RenderWindow& get_window();
+    const sf::RenderWindow& get_window() const;
+    
     Mouse& get_mouse();
+    const Mouse& get_mouse() const;
 
 private:
     std::vector<std::unique_ptr<behavior>> behaviors;

@@ -11,7 +11,8 @@
 #include <optional>   // optional
 #include <functional> // reference_wrapper
 
-#include "./node.hpp"
+#include "./node.hpp"   // District, Node
+#include "./metric.hpp" // PopulationMetric, BiasedMetric
 
 namespace gm
 {
@@ -75,6 +76,8 @@ private:
     // may have changed as a result of pos changing
     void update_border(const vec2i& pos);
 
+private:
+    const vec2i& get_random_border_location() const;
 
 public: 
     bool is_border(const vec2i& pos) const;
@@ -111,6 +114,8 @@ public:
  *************/ 
 
 private:
+    BiasedMetric metric;
+
     void evolve(const vec2i& v);
 
 public:

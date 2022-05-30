@@ -77,6 +77,7 @@ Node& Map::get_random_node()
 // }
 
 // Borders //
+
 bool Map::calculate_border(const vec2i& v) const
 {
     auto node = node_map.find(v);
@@ -128,6 +129,11 @@ void Map::update_border(const vec2i& v)
     
     for (const auto& to_neighbor : to_neighbors)
         update_border_one(v + to_neighbor);
+}
+
+const vec2i& Map::get_random_border_location() const
+{
+    return border_layout[random.next<std::size_t>(0, border_layout.size())];
 }
 
 bool Map::is_border(const vec2i& v) const
@@ -206,15 +212,19 @@ void Map::evolve(const vec2i& v)
     for (District district : districts) 
     {
         if (district == node.district) continue;
+        
+        if (metric.analyze(v, node, district)) 
+        {
+            node.district = district;
+            update_border(v);
+        }
 
-        
-        
+        //just try one for now
         break;
     }
-
 }
 
 void Map::evolve() 
 {
-    evolve(get_random_node_location());
+    evolve(get_random_border_location());
 }

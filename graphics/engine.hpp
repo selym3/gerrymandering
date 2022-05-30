@@ -20,9 +20,9 @@ private:
     Mouse _mouse;
 
 public: 
-    camera& get_camera() { return _camera; }
-    sf::RenderWindow& get_window() { return _window; }
-    Mouse& get_mouse() { return _mouse; }
+    camera& get_camera();
+    sf::RenderWindow& get_window();
+    Mouse& get_mouse();
 
 private:
     std::vector<std::unique_ptr<behavior>> behaviors;

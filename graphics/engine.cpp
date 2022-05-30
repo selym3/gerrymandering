@@ -30,6 +30,10 @@ struct draw_rectangle : public behavior
 
 };
 
+camera& engine::get_camera() { return _camera; }
+sf::RenderWindow& engine::get_window() { return _window; }
+Mouse& engine::get_mouse() { return _mouse; }
+
 engine::engine(unsigned int width, unsigned int height) :
     _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::None },
     _camera { window{width, height} },

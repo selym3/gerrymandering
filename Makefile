@@ -1,22 +1,40 @@
+CXX 	 = g++
+LDLIBS   = -lsfml-window -lsfml-graphics -lsfml-system
+CXXFLAGS = -std=c++20 -Wall -Wextra -Wconversion
 
+.SUFFIXES = .cpp .o
 
-CC := clang++ -std=c++20
-WW := # -Wall -Wextra -Wconversion
-LL := -lsfml-system -lsfml-graphics -lsfml-window
+# define object files necessary for compiling
+OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o 
 
-COMPILER := $(CC) $(WW)
-LINKED := $(COMPILER) $(LL)
+# define dependencies that call for a recompile (can be made more specific to reduce redundant recompiles)
+DEPS = ./util/vec2.hpp ./graphics/camera.hpp ./util/Random.hpp ./algos/metric.hpp # <-- move metric.hpp soon
 
-compile:
-	$(COMPILER) -c graphics/engine.cpp -o bin/engine.o
-	$(COMPILER) -c graphics/behavior.cpp -o bin/behavior.o
-	$(COMPILER) -c algos/simple_map_behavior.cpp -o bin/simple_map_behavior.o
-	$(COMPILER) -c algos/simple_map.cpp -o bin/simple_map.o
+# create output file
+all: main
+	./main
 
-	$(COMPILER) -c algos/map_behavior.cpp -o bin/map_behavior.o
-	$(COMPILER) -c algos/map.cpp -o bin/map.o
+main: main.cpp $(OBJS) $(DEPS)
+	$(CXX) $(CXXFLAGS) $(LDLIBS) main.cpp ./bin/*.o -o main
 
-	$(LINKED) main.cpp bin/*.o -o bin/main
+# clean output
+.PHONY: clean
 
-run: compile
-	./bin/main
+clean:
+	rm -rf ./bin
+	mkdir ./bin
+
+# define how and when to compile an object file 
+# (TODO: replace with a general rule)
+
+./bin/behavior.o : ./graphics/behavior.cpp ./graphics/behavior.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+
+./bin/engine.o : ./graphics/engine.cpp ./graphics/engine.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+
+./bin/map.o : ./algos/map.cpp ./algos/map.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+
+./bin/map_behavior.o : ./algos/map_behavior.cpp ./algos/map_behavior.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)

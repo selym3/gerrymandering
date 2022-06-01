@@ -5,7 +5,7 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -Wconversion
 .SUFFIXES = .cpp .o
 
 # define object files necessary for compiling
-OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o 
+OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o # ./bin/simple_map_behavior.o ./bin/simple_map.o
 
 # define dependencies that call for a recompile (can be made more specific to reduce redundant recompiles)
 DEPS = ./util/vec2.hpp ./graphics/camera.hpp ./util/Random.hpp ./algos/metric.hpp # <-- move metric.hpp soon

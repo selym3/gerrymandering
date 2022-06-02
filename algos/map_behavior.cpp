@@ -87,26 +87,33 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
     {
         auto pos = get_mouse_cell(e);
         auto node = map.get_node(pos);
-
-        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-            return;
-
         auto btn = event.mouseButton.button;
-        if (btn == sf::Mouse::Left)
-        {
-            if (node.has_value())
-            {
-                node->get().district++;
-                node->get().district %= districts;
 
-                map.update_border(pos);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+        {
+            if (btn == sf::Mouse::Left)
+            {
+                if (node.has_value())
+                {
+                    node->get().district++;
+                    node->get().district %= districts;
+
+                    map.update_border(pos);
+                }
+            }
+            else if (btn == sf::Mouse::Right)
+            {
+                if (node.has_value())
+                {
+                    map.evolve(pos);
+                }
             }
         }
-        else if (btn == sf::Mouse::Right)
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
         {
-            if (node.has_value())
+            if (btn == sf::Mouse::Left)
             {
-                map.evolve(pos);
+                map.update_border_one(pos);
             }
         }
     }

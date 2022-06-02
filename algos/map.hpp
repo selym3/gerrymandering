@@ -71,11 +71,11 @@ private:
 
     // if this pos is a border, adds to the border set and layout.
     // otherwise, it removes the pos from the border set and layout.
-    void update_border_one(const vec2i& pos);
+public:    void update_border_one(const vec2i& pos);
 
     // updates the pos and surrounding neighbors whose neighbor status
     // may have changed as a result of pos changing
- public:   void update_border(const vec2i& pos);
+public:   void update_border(const vec2i& pos);
 
 private:
     const vec2i& get_random_border_location() const;

@@ -69,6 +69,8 @@ private:
     // removes the pos from the border set and layout (no effect if not in border set)
     void remove_border_one(const vec2i& pos);
 
+    void update_border_helper(std::unordered_set<vec2i, vec2i_hash>& visited, const vec2i& v);
+
     // if this pos is a border, adds to the border set and layout.
     // otherwise, it removes the pos from the border set and layout.
 public:    void update_border_one(const vec2i& pos);

@@ -1,6 +1,6 @@
 #include "./map.hpp"
 
-// #include <iostream>
+#include <iostream>
 
 using namespace gm;
 
@@ -33,7 +33,7 @@ bool Map::add_node(const vec2i& v, const Node& node)
     if (has_node(v)) return false;
     
     node_layout.push_back(v);
-    node_map[v] = node;
+    node_map.insert({v, node});
     return true;
 }
 
@@ -60,12 +60,12 @@ std::optional<std::reference_wrapper<Node>> Map::get_node(const vec2i& v)
 
 const vec2i& Map::get_random_node_location() const 
 {
-    return node_layout[random.next<std::size_t>(0, node_layout.size())];
+    return node_layout.at(random.next<std::size_t>(0, node_layout.size()));
 }
 
 Node& Map::get_random_node() 
 { 
-    return node_map[get_random_node_location()]; 
+    return node_map.at(get_random_node_location()); 
 }
 
 // std::vector<std::reference_wrapper<const Node>> Map::get_neighbors(const vec2i& v) const
@@ -101,8 +101,14 @@ bool Map::calculate_border(const vec2i& v) const
 
 void Map::add_border_one(const vec2i& v)
 {
-    bool was_inserted = border_set.insert(v).second;
+    std::cout << v << vec2i_hash()(v) << std::endl;
+    //std::cout << "Entering border one" << std::endl;
+    auto result = border_set.insert(v);
+    //std::cout << "Result successfully extracted" << std::endl;
+    bool was_inserted = result.second;
+    //std::cout << "Starting push back" << std::endl;
     if (was_inserted) border_layout.push_back(v);
+    //std::cout << "Finished push back" << std::endl;
 }
 
 void Map::remove_border_one(const vec2i& v)
@@ -119,24 +125,44 @@ void Map::remove_border_one(const vec2i& v)
 }
 
 void Map::update_border_one(const vec2i& v)
-{
+{   
+    std::cout << "actually changing border\n";
     if (calculate_border(v)) 
         add_border_one(v);
     else
         remove_border_one(v);
 }
 
-void Map::update_border(const vec2i& v)
+void Map::update_border_helper(std::unordered_set<vec2i, vec2i_hash>& visited, const vec2i& v)
 {
+
     update_border_one(v);
     
-    for (const auto& to_neighbor : to_neighbors)
-        update_border_one(v + to_neighbor);
+    for (const auto& to_neighbor : to_neighbors) 
+    {   
+       // std::cout << "Entering!" << std::endl;
+        if (
+            visited.find(v + to_neighbor) != visited.end() && 
+            has_node(v + to_neighbor) && 
+            calculate_border(v + to_neighbor)
+        )
+        {   
+         //   std::cout << "Made it in" << std::endl;
+            // visited.insert(v);
+            // update_border_helper(visited, v + to_neighbor);
+        }
+    }
+}
+
+void Map::update_border(const vec2i& v) 
+{   
+    std::unordered_set<vec2i, vec2i_hash> visited{v};
+    update_border_helper(visited, v);
 }
 
 const vec2i& Map::get_random_border_location() const
 {
-    return border_layout[random.next<std::size_t>(0, border_layout.size())];
+    return border_layout.at(random.next<std::size_t>(0, border_layout.size()));
 }
 
 bool Map::is_border(const vec2i& v) const
@@ -164,7 +190,7 @@ void Map::randomize(int districts)
     for (int i = 0; i < districts; ++i)
     {
         centroids.push_back(get_random_node_location());
-        node_map[centroids.back()].district = i;
+        node_map.at(centroids.back()).district = i;
     }
 
     for (auto& [position, node] : node_map) 
@@ -177,7 +203,7 @@ void Map::randomize(int districts)
             double curr_distance = centroid.distance(position);
             if (curr_distance <= min_distance) 
             {
-                min_district = node_map[centroid].district;
+                min_district = node_map.at(centroid).district;
                 min_distance = curr_distance;
             }
         }
@@ -210,7 +236,7 @@ void Map::reset(int districts)
 void Map::evolve(const vec2i& v)
 {
     auto districts = get_neighboring_districts(v);
-    Node& node = node_map[v];
+    Node& node = node_map.at(v);
 
     for (District district : districts) 
     {

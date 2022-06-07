@@ -33,6 +33,8 @@ private:
 private:
     std::unordered_map<vec2i, Node, vec2i_hash> node_map;
     std::vector<vec2i> node_layout;
+    int districts;
+
 
 private:
     const vec2i& get_random_node_location() const;
@@ -117,9 +119,10 @@ public:
  *************/ 
 
 private:
-    NoMetric metric;
+    PopulationMetric metric;
 
 public:
+    void reset_metric();
     void evolve(const vec2i& v);
 
 public:

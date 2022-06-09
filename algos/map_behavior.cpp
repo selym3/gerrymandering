@@ -68,25 +68,7 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Q) 
         {
-            // map.reset(districts);
-            map.metric.clear();
-            for (int i = 0; i < 100; ++i) 
-            {
-                for (int j = 0; j < 100; ++j) 
-                {
-                    vec2i pos = { i, j };
-                    auto node = map.get_node(pos);
-                    if (!node.has_value()) continue;
-
-                    if (i < 50) node->get().district = (j > 50) ? 0 : 1;
-                    else        node->get().district = (j > 50) ? 2 : 3;
-
-                    node->get().population = 1; // Map::random.next(0, 50);
-                    map.metric.add_node(pos, node->get());
-                }
-            }
-            
-            map.find_borders();
+            map.reset(districts);
         }
         else if (event.key.code == sf::Keyboard::W)
         {
@@ -114,9 +96,11 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
             {
                 if (node.has_value())
                 {
+                    District d1 = node->get().district;
                     node->get().district++;
                     node->get().district %= districts;
 
+                    map.metric.move_node(pos, node->get(), d1, node->get().district);
                     map.update_border(pos);
                 }
             }

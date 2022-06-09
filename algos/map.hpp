@@ -9,7 +9,7 @@
 #include <vector>        // vector
 
 #include <optional>   // optional
-#include <functional> // reference_wrapper
+#include <functional> // reference_wrapper, function
 
 #include "./node.hpp"   // District, Node
 #include "./metric.hpp" // PopulationMetric, BiasedMetric
@@ -17,15 +17,28 @@
 namespace gm
 {
     
+struct Borders
+{
+
+
+
+};
+
+// using Populizer = std::function<int(const vec2i&, const Node&)>;
+
+
 struct Map
 {
 
 /*********
  * UTILS *
  *********/ 
-private:
-    const Random::Engine random;
-    const std::vector<vec2i> to_neighbors;
+public:
+// private:
+    const static Random::Engine random;
+    const static std::vector<vec2i> to_neighbors;
+
+    // const static Populizer random_population;
 
 /*********
  * NODES *
@@ -92,6 +105,7 @@ public:
  *******************/ 
 
 public:
+    // static Map make_grid(int width, int height, const Populizer& populizer);
     static Map make_grid(int width, int height);
 
 protected:
@@ -118,7 +132,8 @@ public:
  * EVOLUTION *
  *************/ 
 
-private:
+// private:
+public:
     PopulationMetric metric;
 
 public:

@@ -13,7 +13,8 @@ using namespace gl;
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(100, 100) }, 
     districts { districts },
-    colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
+    colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green, sf::Color::Yellow },
+    show_borders { false }
 {
 }
 
@@ -67,7 +68,25 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Q) 
         {
-            map.reset(districts);
+            // map.reset(districts);
+            map.metric.clear();
+            for (int i = 0; i < 100; ++i) 
+            {
+                for (int j = 0; j < 100; ++j) 
+                {
+                    vec2i pos = { i, j };
+                    auto node = map.get_node(pos);
+                    if (!node.has_value()) continue;
+
+                    if (i < 50) node->get().district = (j > 50) ? 0 : 1;
+                    else        node->get().district = (j > 50) ? 2 : 3;
+
+                    node->get().population = 1; // Map::random.next(0, 50);
+                    map.metric.add_node(pos, node->get());
+                }
+            }
+            
+            map.find_borders();
         }
         else if (event.key.code == sf::Keyboard::W)
         {

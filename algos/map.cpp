@@ -172,7 +172,29 @@ std::unordered_set<District> Map::get_neighboring_districts(const vec2i& v) cons
 
 // Initialization
 
-void Map::randomize(int districts)
+void Map::randomize_grid()
+{
+    metric.clear();
+    districts = 4;
+
+    for (int i = 0; i < 100; ++i) 
+    {
+        for (int j = 0; j < 100; ++j) 
+        {
+            vec2i pos = { i, j };
+            auto node = get_node(pos);
+            if (!node.has_value()) continue;
+
+            if (i < 50) node->get().district = (j > 50) ? 0 : 1;
+            else        node->get().district = (j > 50) ? 2 : 3;
+
+            node->get().population = 1; // Map::random.next(0, 50);
+            metric.add_node(pos, node->get());
+        }
+    }
+}
+
+void Map::randomize_voronoi(int districts)
 {
     metric.clear();
     this->districts = districts;
@@ -212,16 +234,6 @@ void Map::randomize(int districts)
     // reset_metric();
 }
 
-void Map::reset_metric()
-{
-    metric.clear();
-    for (auto& [position, node] : node_map) 
-    {
-        metric.add_node(position, node);
-    }
-}
-
-
 void Map::find_borders()
 {
     border_layout.clear();
@@ -235,7 +247,9 @@ void Map::find_borders()
 
 void Map::reset(int districts)
 {
-    randomize(districts);
+    // metric.clear();
+    randomize_voronoi(districts);
+    // randomize_grid();
     find_borders();
 }
 

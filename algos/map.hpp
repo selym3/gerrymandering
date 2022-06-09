@@ -16,15 +16,6 @@
 
 namespace gm
 {
-    
-struct Borders
-{
-
-
-
-};
-
-// using Populizer = std::function<int(const vec2i&, const Node&)>;
 
 
 struct Map
@@ -119,7 +110,8 @@ protected:
 private:
     // District get_district(int index) const;
 
-    void randomize(int districts);
+    void randomize_voronoi(int districts);
+    void randomize_grid();
 public: // temporarily, for testing border updating
     void find_borders();
 
@@ -137,7 +129,6 @@ public:
     PopulationMetric metric;
 
 public:
-    void reset_metric();
     void evolve(const vec2i& v);
 
 public:

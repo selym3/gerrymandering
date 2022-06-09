@@ -6,8 +6,12 @@ using namespace gm;
 
 // Factory Methods //
 
-Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{}, random{},
-             districts { 0 }, to_neighbors { {0, 1}, {0, -1}, {1, 0}, {-1, 0} }
+const Random::Engine Map::random = {};
+const std::vector<vec2i> Map::to_neighbors = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
+// const Populizer Map::random_population = [](auto a, auto b) { return random.next(0, 50); };
+
+Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{},
+             districts { 0 }
 {
 }
 
@@ -102,10 +106,10 @@ bool Map::calculate_border(const vec2i& v) const
 void Map::add_border_one(const vec2i& v)
 {
     bool was_inserted = border_set.insert(v).second;
+
     if (was_inserted) 
     {
         border_layout.push_back(v);
-        metric.add_node(v, node_map[v]);
     }
 }
 
@@ -120,8 +124,6 @@ void Map::remove_border_one(const vec2i& v)
     for (; it != border_layout.end(); ++it)
         if (*it == v) break;
     border_layout.erase(it);
-
-    metric.remove_node(v, node_map[v]);
 }
 
 void Map::update_border_one(const vec2i& v)
@@ -172,7 +174,9 @@ std::unordered_set<District> Map::get_neighboring_districts(const vec2i& v) cons
 
 void Map::randomize(int districts)
 {
+    metric.clear();
     this->districts = districts;
+
     std::vector<vec2i> centroids;
     for (int i = 0; i < districts; ++i)
     {
@@ -182,6 +186,8 @@ void Map::randomize(int districts)
 
     for (auto& [position, node] : node_map) 
     {
+        node.population = 0;
+
         District min_district = -1;
         double min_distance = std::numeric_limits<double>::max();
 
@@ -195,16 +201,15 @@ void Map::randomize(int districts)
             }
         }
 
-        node.population = 0;
-        
-        if (position.x > 250)
-            node.population = random.next(0, 2);
-
         if (min_district >= 0) 
+        {
+            node.population = random.next(0, 50);
             node.district = min_district;
+            metric.add_node(position, node);
+        }
     }
 
-    reset_metric();
+    // reset_metric();
 }
 
 void Map::reset_metric()
@@ -224,8 +229,7 @@ void Map::find_borders()
 
     for (const auto &pos : node_layout)
     {
-        if (calculate_border(pos))
-            add_border_one(pos);
+        update_border_one(pos);
     }
 }
 
@@ -249,14 +253,10 @@ void Map::evolve(const vec2i& v)
 
         if (metric.analyze(v, node, district)) 
         {
-            std::cout << "swapping district" << std::endl;
+            metric.move_node(v, node_map[v], node.district, district);
             node.district = district;
             update_border(v);
         } 
-        else 
-        {
-            std::cout << "not swapping district" << std::endl;
-        }
 
         //just try one for now
         break;

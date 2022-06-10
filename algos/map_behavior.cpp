@@ -13,7 +13,8 @@ using namespace gl;
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(100, 100) }, 
     districts { districts },
-    colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green }
+    colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green, sf::Color::Yellow },
+    show_borders { false }
 {
 }
 
@@ -95,9 +96,11 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
             {
                 if (node.has_value())
                 {
+                    District d1 = node->get().district;
                     node->get().district++;
                     node->get().district %= districts;
 
+                    map.metric.move_node(pos, node->get(), d1, node->get().district);
                     map.update_border(pos);
                 }
             }

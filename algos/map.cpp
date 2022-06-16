@@ -23,7 +23,7 @@ Map Map::make_grid(int width, int height)
     {
         for (int x = 0; x < width; ++x)
         {
-            map.add_node(vec2i{x, y}, Node{ -1, 0 });
+            map.add_node(vec2i{x, y}, Node{ -1 });
         }
     }
 
@@ -64,7 +64,7 @@ std::optional<std::reference_wrapper<Node>> Map::get_node(const vec2i& v)
 
 const vec2i& Map::get_random_node_location() const 
 {
-    return node_layout[random.next<std::size_t>(0, node_layout.size())];
+    return node_layout.at(random.next<std::size_t>(0, node_layout.size()));
 }
 
 Node& Map::get_random_node() 
@@ -78,7 +78,7 @@ void Map::set_district(const vec2i& pos, District d)
     if (!node.has_value()) return;
 
     metric.move_node(pos, node->get(), d);
-    node->get().district = d;
+    node->get().set_district(d);
 }
 
 // std::vector<std::reference_wrapper<const Node>> Map::get_neighbors(const vec2i& v) const
@@ -104,7 +104,7 @@ bool Map::calculate_border(const vec2i& v) const
         auto iter = node_map.find(to_neighbor + v);
         if (iter != node_map.end())
         {
-            if (node->second.district != iter->second.district)
+            if (node->second.get_district() != iter->second.get_district())
                 return true;
         }
     }
@@ -174,7 +174,7 @@ std::unordered_set<District> Map::get_neighboring_districts(const vec2i& v) cons
     for (const auto& to_neighbor : to_neighbors) 
     {
         auto iter = node_map.find(to_neighbor + v); // vec2i, Node
-        if (iter != node_map.end()) neighboring_districts.insert(iter->second.district);
+        if (iter != node_map.end()) neighboring_districts.insert(iter->second.get_district());
     }
     return neighboring_districts;
 }
@@ -194,10 +194,10 @@ void Map::randomize_grid()
             auto node = get_node(pos);
             if (!node.has_value()) continue;
 
-            if (i < 50) node->get().district = (j > 50) ? 0 : 1;
-            else        node->get().district = (j > 50) ? 2 : 3;
+            if (i < 50) node->get().set_district((j > 50) ? 0 : 1);
+            else        node->get().set_district((j > 50) ? 2 : 3);
 
-            node->get().population = 1; // Map::random.next(0, 50);
+            node->get().set_population(Party{0}, 1); // Map::random.next(0, 50);
             metric.add_node(pos, node->get());
         }
     }
@@ -212,12 +212,12 @@ void Map::randomize_voronoi(int districts)
     for (int i = 0; i < districts; ++i)
     {
         centroids.push_back(get_random_node_location());
-        node_map[centroids.back()].district = i;
+        node_map[centroids.back()].set_district(i);
     }
 
     for (auto& [position, node] : node_map) 
     {
-        node.population = 0;
+        node.clear_population();
 
         District min_district = -1;
         double min_distance = std::numeric_limits<double>::max();
@@ -227,15 +227,15 @@ void Map::randomize_voronoi(int districts)
             double curr_distance = centroid.distance(position);
             if (curr_distance <= min_distance) 
             {
-                min_district = node_map[centroid].district;
+                min_district = node_map[centroid].get_district();
                 min_distance = curr_distance;
             }
         }
 
         if (min_district >= 0) 
         {
-            node.population = random.next(0, 50);
-            node.district = min_district;
+            node.set_population(Party{0}, random.next(0, 50));
+            node.set_district(min_district);
             metric.add_node(position, node);
         }
     }
@@ -271,7 +271,7 @@ void Map::evolve(const vec2i& v)
 
     for (District district : districts) 
     {
-        if (district == node.district) continue;
+        if (district == node.get_district()) continue;
         
 
         if (metric.analyze(v, node, district)) 

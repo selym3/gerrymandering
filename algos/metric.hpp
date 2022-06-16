@@ -95,12 +95,19 @@ public:
 
     void move_node(const vec2i& pos, const Node& node, District d1, District d2)
     {
+        if (d1 == d2) return;
+
         Node temp = node;
         temp.district = d1;
         remove_node(pos, temp);
 
         temp.district = d2;
         add_node(pos, temp);
+    }
+
+    void move_node(const vec2i& pos, const Node& node, District dest)
+    {
+        move_node(pos, node, node.district, dest);
     }
 
     void clear() 
@@ -119,7 +126,7 @@ public:
         // std::cout << m2 << "\n";
         move_node(pos, node, district, node.district);
 
-        // std::cout << "total pop: " << total_population << std::endl;
+        std::cout << "total pop: " << total_population << std::endl;
         std::cout << "expected pop: " << expected_population() << std::endl;
         std::cout << "pop data: " << total_population << std::endl;
         for (auto& [district, pop] : population_map)
@@ -144,6 +151,8 @@ private:
     }
 
 };
+
+/*
 
 using Party = int;
 struct PartyPopulationMetric 
@@ -261,6 +270,8 @@ private:
     }
 
 };
+*/
 }
+
 
 #endif

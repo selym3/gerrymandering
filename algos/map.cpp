@@ -72,6 +72,15 @@ Node& Map::get_random_node()
     return node_map[get_random_node_location()]; 
 }
 
+void Map::set_district(const vec2i& pos, District d)
+{
+    auto node = get_node(pos);
+    if (!node.has_value()) return;
+
+    metric.move_node(pos, node->get(), d);
+    node->get().district = d;
+}
+
 // std::vector<std::reference_wrapper<const Node>> Map::get_neighbors(const vec2i& v) const
 // {
 //     std::vector<std::reference_wrapper<const Node>> out;
@@ -267,8 +276,7 @@ void Map::evolve(const vec2i& v)
 
         if (metric.analyze(v, node, district)) 
         {
-            metric.move_node(v, node_map[v], node.district, district);
-            node.district = district;
+            set_district(v, district);
             update_border(v);
         } 
 

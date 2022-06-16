@@ -55,6 +55,8 @@ public:
 
     // std::vector<std::reference_wrapper<const Node>> get_neighbors(const vec2i& v) const;
 
+    void set_district(const vec2i&, District d);
+
 /***********
  * BORDERS *
  ***********/

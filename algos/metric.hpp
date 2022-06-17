@@ -37,19 +37,18 @@ public:
     void add_node(const vec2i& pos, const Node& node);
     void del_node(const vec2i& pos, const Node& node);
     
-    void move_node(const vec2i& pos, Node node, District from, District to);
-    
 public:
     bool analyze(const vec2i& pos, const Node& node, District district);
 
 private:
-    double expected_population() const;
-    double get_measurement(District d1, District d2) const;
+    double get_expected_population() const;
+    double get_average_percent_error(District d1, District d2) const;
 
 private:
     std::unordered_map<District, int> population_map;
     int total_population;
 
+    int get_population(District d) const;
     bool contains(District d) const;
 };
 

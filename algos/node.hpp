@@ -12,7 +12,7 @@ using Party = int;
 // TODO: use a party to account for non-voters / kids
 struct Node
 {
-    Node(District district);
+    Node(District district = -1);
 
     void set_district(District d1);
     District get_district() const;

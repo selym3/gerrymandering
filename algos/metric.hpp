@@ -10,54 +10,50 @@
 namespace gm
 {
 
-/*
 struct Metric
 {
-    virtual add_node(const vec2i& pos, const Node& node) = 0;
-    virtual remove_node(const vec2i& pos, const Node& node) = 0;
+public:
+    virtual ~Metric();
+    virtual void clear();
 
-    District move_node(const vec2i& pos, const Node& node, District district)
-    {
-        District old_district = node.district;
-        remove_node(pos, node);
+public:
+    virtual void add_node(const vec2i& pos, const Node& node);
+    virtual void del_node(const vec2i& pos, const Node& node);
 
-        Node moved = node;
-        moved.district = district;
-        add_node(pos, node);
-        return old_district;
-    }
+    void move_node(const vec2i& pos, Node node, District from, District to);
+    void move_node(const vec2i& pos, Node node, District to);
 
-    bool analyze(const vec2i& pos, const Node& node, District district) 
-    {
-        auto m1 = get_measurement();
-        District old = move_node(pos, node, district);
-        auto m2 = get_measurement();
-        move_node(pos, node, old);
-
-        return m2 > m1;
-    }
-
-    virtual Comparable get_measurement() = 0;
+public:
+    virtual bool analyze(const vec2i& pos, const Node& node, District district) = 0;
 };
 
-*/
-
-struct NoMetric
+struct PopulationMetric : public Metric
 {
-    bool analyze(const vec2i& pos, const Node& node, District district)
-    {
-        return true;
-    }
+public:
+    PopulationMetric();
+    void clear();
+
+public:
+    void add_node(const vec2i& pos, const Node& node);
+    void del_node(const vec2i& pos, const Node& node);
+    
+    void move_node(const vec2i& pos, Node node, District from, District to);
+    
+public:
+    bool analyze(const vec2i& pos, const Node& node, District district);
+
+private:
+    double expected_population() const;
+    double get_measurement(District d1, District d2) const;
+
+private:
+    std::unordered_map<District, int> population_map;
+    int total_population;
+
+    bool contains(District d) const;
 };
 
-struct BiasedMetric
-{
-    bool analyze(const vec2i& pos, const Node& node, District district)
-    {
-        return node.district < district;
-    }
-};
-
+/*
 struct PopulationMetric 
 {
 private:
@@ -126,13 +122,13 @@ public:
         // std::cout << m2 << "\n";
         move_node(pos, node, district, node.district);
 
-        std::cout << "total pop: " << total_population << std::endl;
-        std::cout << "expected pop: " << expected_population() << std::endl;
-        std::cout << "pop data: " << total_population << std::endl;
-        for (auto& [district, pop] : population_map)
-        {
-            std::cout << district << " " << pop << std::endl;
-        }
+        // std::cout << "total pop: " << total_population << std::endl;
+        // std::cout << "expected pop: " << expected_population() << std::endl;
+        // std::cout << "pop data: " << total_population << std::endl;
+        // for (auto& [district, pop] : population_map)
+        // {
+        //     std::cout << district << " " << pop << std::endl;
+        // }
 
         return m2 > m1;
     }
@@ -151,6 +147,7 @@ private:
     }
 
 };
+*/
 
 /*
 

@@ -48,8 +48,8 @@ void MapBehavior::execute(engine& e)
         sf::Color color = sf::Color{100, 100, 100};
         if (show_borders && map.is_border(pos))
             color = sf::Color::Black;
-        else if (n.district >= 0 && n.district < districts)
-            color = colors[n.district];
+        else if (n.get_district() >= 0 && n.get_district() < districts)
+            color = colors[n.get_district()];
 
         draw_cell(e, cells, pos, color);
     }
@@ -96,11 +96,10 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
             {
                 if (node.has_value())
                 {
-                    District d1 = node->get().district;
-                    node->get().district++;
-                    node->get().district %= districts;
+                    District d1 = node->get().get_district();
+                    node->get().set_district((node->get().get_district()+1)%districts);
 
-                    map.metric.move_node(pos, node->get(), d1, node->get().district);
+                    map.metric.move_node(pos, node->get(), d1, node->get().get_district());
                     map.update_border(pos);
                 }
             }

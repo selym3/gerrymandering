@@ -5,10 +5,10 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -Wconversion
 .SUFFIXES = .cpp .o
 
 # define object files necessary for compiling
-OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o # ./bin/simple_map_behavior.o ./bin/simple_map.o
+OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o ./bin/metric.o ./bin/node.o # ./bin/simple_map_behavior.o ./bin/simple_map.o
 
 # define dependencies that call for a recompile (can be made more specific to reduce redundant recompiles)
-DEPS = ./util/vec2.hpp ./graphics/camera.hpp ./util/Random.hpp ./algos/metric.hpp # <-- move metric.hpp soon
+DEPS = ./util/vec2.hpp ./graphics/camera.hpp ./util/Random.hpp
 
 # create output file
 all: main
@@ -37,4 +37,10 @@ clean:
 	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
 
 ./bin/map_behavior.o : ./algos/map_behavior.cpp ./algos/map_behavior.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+
+./bin/metric.o : ./algos/metric.cpp ./algos/metric.hpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+
+./bin/node.o : ./algos/node.cpp ./algos/node.hpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)

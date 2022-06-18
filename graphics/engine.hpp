@@ -4,6 +4,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+
 #include <memory>
 #include "./behavior.hpp"
 #include "./camera.hpp"
@@ -18,6 +19,9 @@ private:
     sf::RenderWindow _window;
     camera _camera;
     Mouse _mouse;
+
+    const std::string filename;
+    int frames;
 
 public: 
     camera& get_camera();
@@ -45,6 +49,9 @@ private:
 public:
     bool is_running() const;
     void execute();
+
+public: 
+    void save();
 };
 
 }

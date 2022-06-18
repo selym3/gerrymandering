@@ -3,6 +3,7 @@
 using namespace gl;
 
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <iostream>
 
@@ -42,6 +43,8 @@ const Mouse& engine::get_mouse() const { return _mouse; }
 engine::engine(unsigned int width, unsigned int height) :
     _window { sf::VideoMode(width, height), "gerrymandering", sf::Style::Default },
     _camera { window{width, height} },
+    filename { "map" },
+    frames { 0 },
     behaviors {}
 {
     behaviors.push_back(std::make_unique<pan_zoom>());
@@ -92,6 +95,23 @@ void engine::execute()
     }
 
     draw();
+}
+
+void engine::save()
+{
+    std::string append = std::to_string(frames);
+    append.insert(0, 5 - append.size(), '0');
+
+    frames++;
+
+    sf::Texture screen;
+    screen.create(_window.getSize().x, _window.getSize().y);
+    screen.update(_window);
+
+    if (!screen.copyToImage().saveToFile("anim/" + filename + "0" + append + ".png"))
+    {
+        std::cout << "ERROR: FILE NOT SAVED!!!!" << std::endl;
+    }
 }
 
 //

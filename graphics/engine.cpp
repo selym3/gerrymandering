@@ -76,6 +76,8 @@ void engine::draw()
     for (auto& behavior : behaviors)
             behavior->execute(*this);
     _window.display();
+
+    save();
 }
 
 //

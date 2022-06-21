@@ -110,7 +110,7 @@ void engine::save()
     screen.create(_window.getSize().x, _window.getSize().y);
     screen.update(_window);
 
-    if (!screen.copyToImage().saveToFile("anim/" + filename + "0" + append + ".png"))
+    if (!screen.copyToImage().saveToFile("animation/anim/" + filename + "0" + append + ".png"))
     {
         std::cout << "ERROR: FILE NOT SAVED!!!!" << std::endl;
     }

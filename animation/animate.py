@@ -8,7 +8,7 @@ import os
 import sys
 
 def animate(name):
-    filenames = glob.glob("anim/" + name + "*");
+    filenames = glob.glob("./anim/" + name + "*");
     filenames = sorted(filenames)
     print(filenames)
     images = []

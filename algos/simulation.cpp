@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         std::string append = std::to_string(frame);
         append.insert(0, 5 - append.size(), '0');
 
-        if (!rt.getTexture().copyToImage().saveToFile("anim/" + filename + "0" + append + ".png"))
+        if (!rt.getTexture().copyToImage().saveToFile("animation/anim/" + filename + "0" + append + ".png"))
         {
             std::cout << "ERROR: FILE NOT SAVED!!!!" << std::endl;
         }

@@ -183,7 +183,6 @@ std::unordered_set<District> Map::get_neighboring_districts(const vec2i& v) cons
 
 void Map::randomize_grid()
 {
-    metric.clear();
     districts = 4;
 
     for (int i = 0; i < 100; ++i) 
@@ -205,7 +204,6 @@ void Map::randomize_grid()
 
 void Map::randomize_voronoi(int districts)
 {
-    metric.clear();
     this->districts = districts;
 
     std::vector<vec2i> centroids;
@@ -256,9 +254,11 @@ void Map::find_borders()
 
 void Map::reset(int districts)
 {
-    // metric.clear();
+    metric.clear();
+    
     randomize_voronoi(districts);
     // randomize_grid();
+
     find_borders();
 }
 

@@ -1,0 +1,3 @@
+pillow==9.1.1
+imageio==2.19.3
+moviepy==1.0.3

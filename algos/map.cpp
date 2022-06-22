@@ -321,23 +321,12 @@ void Map::clear_population()
 
 void Map::reset(int districts)
 {
-    std::cout << "reset(districts): 1" << std::endl;
     metric.clear();
-    
-    std::cout << "reset(districts): 2" << std::endl;
     clear_population();
-
-    std::cout << "reset(districts): 3" << std::endl;
-    assign_population(4);
-    
-    std::cout << "reset(districts): 4" << std::endl;
+    assign_population(districts * 2);
     randomize_voronoi(districts);
     // randomize_grid();
-
-    std::cout << "reset(districts): 5" << std::endl;
     find_borders();
-
-    std::cout << "reset(districts): 6" << std::endl;
 }
 
 // Evolution //

@@ -107,10 +107,7 @@ bool PopulationMetric::contains(District d) const
 }
 
 
-PartyPopulationMetric::PartyPopulationMetric() : 
-    total_population {0},
-    party_to_total_supporters {},
-    party_population_map {}
+PartyPopulationMetric::PartyPopulationMetric() 
 {
 }
 
@@ -118,6 +115,7 @@ void PartyPopulationMetric::add_node(const vec2i& pos, const Node& node)
 {
     // if (!contains(node.get_district())) party_population_map[node.get_district()] = std::unordered_map();
     for(auto &[party, population] : node.get_party_population_map()) {
+        population_map[node.get_district()] += population;
         party_population_map[node.get_district()][party] += population;
         party_to_total_supporters[party] += population;
         total_population += population;
@@ -128,6 +126,7 @@ void PartyPopulationMetric::del_node(const vec2i& pos, const Node& node)
 {
     if (!contains(node.get_district())) { std::cerr << "something is up???\n"; return; }
     for(auto &[party, population] : node.get_party_population_map()) {
+        population_map[node.get_district()] -= population;
         party_population_map[node.get_district()][party] -= population;
         party_to_total_supporters[party] -= population;
         total_population -= population;
@@ -138,6 +137,7 @@ void PartyPopulationMetric::del_node(const vec2i& pos, const Node& node)
 void PartyPopulationMetric::clear() 
 { 
     total_population = 0;
+    population_map.clear();
     party_to_total_supporters.clear();
     party_population_map.clear();
 }
@@ -146,29 +146,48 @@ bool PartyPopulationMetric::analyze(const vec2i& pos, const Node& node, District
 {
     auto m1 = get_average_percent_error();
     move_node(pos, node, node.get_district(), district);
-    auto m2 = get_average_percent_error();
-    move_node(pos, node, district, node.get_district());
 
-    return m2 < m1;
-    // std::cout << "total pop: " << total_population << std::endl;
+/*
+    std::cout << "total pop: " << total_population << std::endl;
     // std::cout << "exptexted pop: " << expected_population() << std::endl;
-    // std::cout << "pop data: " << std::endl;
-    /*
-    for (auto& [district, district_party_to_population_map] : party_population_map)
+    std::cout << "pop data: " << std::endl;
+    
+    for (auto& [district, party_to_population_map] : party_population_map)
     {
         std::cout << "District " << district << "'s Composition:" << std::endl;
-        for (auto& [party, population]: district_party_to_population_map) 
+        for (auto& [party, population]: party_to_population_map) 
         {
             std::cout << "Party " << party << ": " << population << "people" << std::endl;
         }
     }*/
+
+    auto m2 = get_average_percent_error();
+    move_node(pos, node, district, node.get_district());
+
+    /*
+    std::cout << "total pop: " << total_population << std::endl;
+    // std::cout << "exptexted pop: " << expected_population() << std::endl;
+    std::cout << "pop data: " << std::endl;
+    
+    for (auto& [district, party_to_population_map] : party_population_map)
+    {
+        std::cout << "District " << district << "'s Composition:" << std::endl;
+        for (auto& [party, population]: party_to_population_map) 
+        {
+            std::cout << "Party " << party << ": " << population << "people" << std::endl;
+        }
+    }*/
+
+    return m2 < m1;
 }
 
 // The average of all percent errors (what if we used N2 distance)
 double PartyPopulationMetric::get_average_percent_error() const
 {   
     double result = 0.0;
-    std::unordered_map<Party, int> parties_to_winners;
+    std::unordered_map<Party, double> parties_to_winners;
+    // Sum of all proportions
+    std::unordered_map<Party, double> parties_to_proportion_sum;
 
     for (auto& [district, district_party_to_population_map] : party_population_map)
     {
@@ -182,15 +201,23 @@ double PartyPopulationMetric::get_average_percent_error() const
                 }
             )->first;
 
-        ++parties_to_winners[winning_party];
+        parties_to_winners[winning_party]++;
+        parties_to_proportion_sum[winning_party] += district_party_to_population_map.at(winning_party) / (double)population_map.at(district);
     }
 
-    for (auto& [party, num_representatives] : parties_to_winners) {
-        int expected_winners = party_to_total_supporters.at(party);
-        result += std::abs((num_representatives - expected_winners) / (double)expected_winners / (double)party_to_total_supporters.size());
+    for (auto& [party, num_representatives] : parties_to_proportion_sum) {
+        double expected_winners = party_to_total_supporters.at(party) * party_population_map.size() / (double)total_population;
+        std::cout << "Party " << party << ":\n";
+        std::cout << "Expected/should win: " << expected_winners << " districts.\n";
+        std::cout << "Districts won: " << parties_to_winners[party] << ".\n";
+        std::cout << "Sum of each winner's proportion of their captured voters out of their district population: " << parties_to_proportion_sum[party] << ".\n";
+        
+        // L2 distance
+        result += (num_representatives - expected_winners) * (num_representatives - expected_winners);
+        // average percent error result += std::abs((num_representatives - expected_winners) / (double)expected_winners / (double)party_to_total_supporters.size());
     }
 
-    return result;
+    return sqrt(result);
 }
 
 bool PartyPopulationMetric::contains(District d) const

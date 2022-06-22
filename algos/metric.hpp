@@ -64,6 +64,7 @@ public:
     bool analyze(const vec2i& pos, const Node& node, District district);
 
 private:
+    std::unordered_map<District, int> population_map;
     std::unordered_map<District, std::unordered_map<Party, int>> party_population_map;
     std::unordered_map<Party, int> party_to_total_supporters;
     int total_population;

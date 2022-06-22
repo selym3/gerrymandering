@@ -299,8 +299,8 @@ void Map::reset(int districts)
 
 void Map::evolve(const vec2i& v)
 {
-    if (will_island(get_random_border_location())) {
-        evolve(v);
+    if (will_island(v)) {
+        evolve(get_random_border_location());
         return;
     }
 

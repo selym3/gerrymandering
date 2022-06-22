@@ -292,7 +292,7 @@ vec2i CenteringMetric::get_center(District d) const
 
 AlternatingMetric::AlternatingMetric() :
     fixer{}, upper{}, 
-    evolutions{0}, up_period { 5000 }, fix_period { 10000 }, upping { false }
+    evolutions{0}, up_period { 100000 }, fix_period { 10000 }, upping { true }
 {
 }
 
@@ -335,7 +335,7 @@ bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District dis
         if (evolutions > fix_period)
         {
             evolutions = 0;
-            upping = true;
+            // upping = true;
         }
     }
 

@@ -328,7 +328,7 @@ void Map::reset(int districts)
     clear_population();
 
     std::cout << "reset(districts): 3" << std::endl;
-    assign_population(districts * 2);
+    assign_population(4);
     
     std::cout << "reset(districts): 4" << std::endl;
     randomize_voronoi(districts);

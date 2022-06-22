@@ -10,10 +10,12 @@ using namespace gl;
 
 #include <iostream>
 
+#include "../util/make_hsv.hpp"
+
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(200, 200) }, 
     districts { districts },
-    colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green, sf::Color::Yellow },
+    colors {},
     show_borders { false },
     mode { DrawMode::Districts }
 {
@@ -24,6 +26,11 @@ MapBehavior::MapBehavior(int districts) :
     {
         if (node.get_population() > max_population)
             max_population = node.get_population();
+    }
+
+    for (int i = 0; i < districts;++i)
+    {
+        colors.push_back(hsv(static_cast<int>((i * 360.0)/districts), 1, 1));
     }
 }
 
@@ -162,7 +169,11 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         auto btn = event.mouseButton.button;
 
         if (node.has_value())
-            std::cout << node->get().get_population() << "\n";
+        {
+            std::cout << "Node(" << pos << "): \n";
+            std::cout << "\tDistrict: " << node->get().get_district() << "\n";
+            std::cout << "\tPopulation: " << node->get().get_population() << "\n";
+        }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
         {

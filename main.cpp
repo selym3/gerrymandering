@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 {
     gl::engine engine { 640, 480 };
     // engine.add_behavior(std::make_unique<gm::simple_map_behavior>());
-    engine.add_behavior(std::make_unique<gm::MapBehavior>(4));
+    engine.add_behavior(std::make_unique<gm::MapBehavior>(10));
 
     while (engine.is_running())
     {

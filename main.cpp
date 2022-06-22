@@ -1,24 +1,9 @@
 #include "./graphics/engine.hpp"
-// #include "./algos/simple_map_behavior.hpp"
-// #include "./algos/_map.hpp"
 
 #include "./algos/map.hpp"
 #include "./algos/map_behavior.hpp"
 
 #include <memory>
-
-
-// void configure(gm::Map& map)
-// {
-
-// }
-
-// std::shared_ptr<gm::Map> make_map()
-// {
-//     std::shared_ptr<gm::Map> map = std::make_shared<gm::Map>();
-//     configure(*map);
-//     return map;
-// }
 
 int main(int argc, char** argv)
 {

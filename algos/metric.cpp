@@ -290,3 +290,39 @@ vec2i CenteringMetric::get_center(District d) const
 }
 
 
+AlternatingMetric::AlternatingMetric(int period)
+    : fixer{}, upper{}, evolutions{0}, period { period }
+{
+}
+
+Metric& AlternatingMetric::get_metric() 
+{
+    Metric& a = fixer;
+    Metric& b = upper;
+
+    return ((evolutions/period) % 2) == 0 ? a : b;
+}
+
+void AlternatingMetric::clear()
+{
+    fixer.clear();
+    upper.clear();
+}
+
+void AlternatingMetric::add_node(const vec2i& pos, const Node& node) 
+{
+    fixer.add_node(pos, node);
+    upper.add_node(pos, node);
+}
+
+void AlternatingMetric::del_node(const vec2i& pos, const Node& node)
+{
+    fixer.del_node(pos, node);
+    upper.del_node(pos, node);
+}
+
+bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District district)
+{
+    return get_metric().analyze(pos, node, district);
+}
+

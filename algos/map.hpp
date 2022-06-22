@@ -137,7 +137,7 @@ public:
 
 // private:
 public:
-    CenteringMetric metric;
+    AlternatingMetric metric;
 
 public:
     void evolve(const vec2i& v);

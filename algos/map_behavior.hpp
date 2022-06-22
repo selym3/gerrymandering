@@ -8,6 +8,10 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <vector>
 
+#include <thread>
+#include <atomic>
+
+
 namespace gm
 {
 
@@ -36,6 +40,9 @@ private:
 private:
     Map map;
     int districts;
+    
+    std::atomic<bool> evolving;
+    std::thread evolver_thread;
 
 private:
     DrawMode mode;
@@ -49,6 +56,8 @@ private:
 
 public:
     MapBehavior(int districts);
+    ~MapBehavior();
+
 
     void handle_event(gl::engine&, const sf::Event&);
     void execute(gl::engine&);

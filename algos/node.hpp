@@ -19,6 +19,7 @@ struct Node
 
     int get_population() const;
     int get_population(Party p) const;
+    const std::unordered_map<Party, int>& get_party_population_map() const;
 
     void set_population(Party p, int population);
     void clear_population();

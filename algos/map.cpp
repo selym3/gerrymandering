@@ -3,12 +3,45 @@
 // #include <iostream>
 
 using namespace gm;
-
-// Factory Methods //
-
+// Utils
 const Random::Engine Map::random = {};
 const std::vector<vec2i> Map::to_neighbors = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
+const std::vector<vec2i> Map::to_eight_neighbors = { {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}, {1, 0}, {1, 1} };
+
+bool Map::will_island(const vec2i& v) const
+{
+    District this_district = node_map.at(v).get_district();
+    size_t count_contiguous_regions = 0;
+    bool last_was_this_district = false;
+
+    // Go counterclockwise
+    for (const vec2i& neighbor: to_eight_neighbors) {
+
+        if (node_map.count(v + neighbor) && this_district == node_map.at(v + neighbor).get_district()) {
+            if (!last_was_this_district) {
+                ++count_contiguous_regions;
+            }
+            last_was_this_district = true;
+        } else {
+            last_was_this_district = false;
+        }
+
+    }
+
+    // You overcounted if your first and last node are the same but separated on the other end
+    if (
+        node_map.count(v + to_eight_neighbors.front()) && this_district == node_map.at(v + to_eight_neighbors.front()).get_district() && 
+        node_map.count(v + to_eight_neighbors.back()) && this_district == node_map.at(v + to_eight_neighbors.back()).get_district() &&
+        count_contiguous_regions > 1
+    ) {
+        --count_contiguous_regions;
+    }
+
+    return count_contiguous_regions >= 2;
+}
+
 // const Populizer Map::random_population = [](auto a, auto b) { return random.next(0, 50); };
+// Factory Methods //
 
 Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{},
              districts { 0 }
@@ -298,8 +331,13 @@ void Map::reset(int districts)
 
 void Map::evolve(const vec2i& v)
 {
+
     if (!is_border(v)) {
         remove_border_one(v);
+        return;
+    }
+    if (will_island(v)) {
+        evolve(get_random_border_location());
         return;
     }
 

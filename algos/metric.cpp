@@ -165,7 +165,7 @@ bool PartyPopulationMetric::analyze(const vec2i& pos, const Node& node, District
 }
 
 // The average of all percent errors (what if we used N2 distance)
-double PartyPopulationMetric::get_average_percent_error()
+double PartyPopulationMetric::get_average_percent_error() const
 {   
     double result = 0.0;
     std::unordered_map<Party, int> parties_to_winners;
@@ -174,8 +174,8 @@ double PartyPopulationMetric::get_average_percent_error()
     {
         Party winning_party = 
             std::max_element(
-                district_party_to_population_map.begin(),
-                district_party_to_population_map.end(),
+                district_party_to_population_map.cbegin(),
+                district_party_to_population_map.cend(),
                 [] (std::pair<Party, int> p1, std::pair<Party, int> p2) -> bool
                 {
                     return p1.second < p2.second;
@@ -186,7 +186,7 @@ double PartyPopulationMetric::get_average_percent_error()
     }
 
     for (auto& [party, num_representatives] : parties_to_winners) {
-        int expected_winners = party_to_total_supporters[party];
+        int expected_winners = party_to_total_supporters.at(party);
         result += std::abs((num_representatives - expected_winners) / (double)expected_winners / (double)party_to_total_supporters.size());
     }
 

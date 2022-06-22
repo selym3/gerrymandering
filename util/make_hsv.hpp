@@ -1,6 +1,8 @@
 #ifndef __MAKE_HSV__
 #define __MAKE_HSV__
 
+// https://en.sfml-dev.org/forums/index.php?topic=7313.0
+
 #include <SFML/Graphics/Color.hpp>
 
 // hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f

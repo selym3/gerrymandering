@@ -34,6 +34,11 @@ int Node::get_population(Party p) const
     return iter->second;
 }
 
+const std::unordered_map<Party, int>& Node::get_party_population_map() const
+{
+    return population_map;
+}
+
 void Node::set_population(Party p, int new_pop) 
 {
     population -= get_population(p);

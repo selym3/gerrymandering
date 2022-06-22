@@ -52,6 +52,32 @@ private:
     bool contains(District d) const;
 };
 
+struct PartyPopulationMetric : public Metric
+{
+public:
+    PartyPopulationMetric();
+    void clear();
+public:
+    void add_node(const vec2i& pos, const Node& node);
+    void del_node(const vec2i& pos, const Node& node);
+public:
+    bool analyze(const vec2i& pos, const Node& node, District district);
+
+private:
+    double get_expected_population() const;
+    double get_average_percent_error(District d1, District d2) const;
+
+    std::unordered_map<District, std::unordered_map<Party, int>> party_population_map;
+    std::unordered_map<Party, int> party_to_total_supporters;
+    int total_population;
+
+    int get_total_population(District d) const;
+    int get_population_in_party(District d, Party p);
+    bool contains(District d) const;
+
+    double get_average_percent_error();
+};
+
 /*
 struct PopulationMetric 
 {
@@ -149,7 +175,6 @@ private:
 */
 
 /*
-
 using Party = int;
 struct PartyPopulationMetric 
 {

@@ -32,6 +32,8 @@ public:
     bool will_island(const vec2i& v) const;
     // const static Populizer random_population;
 
+    void sanity_check();
+
 /*********
  * NODES *
  *********/ 
@@ -112,9 +114,15 @@ protected:
 
 private:
     // District get_district(int index) const;
+    void clear_population();
 
     void randomize_voronoi(int districts);
     void randomize_grid();
+
+    double calculate_population(double distance) const;
+    void assign_population(const vec2i& city);
+    void assign_population(int cities);
+
 public: // temporarily, for testing border updating
     void find_borders();
 

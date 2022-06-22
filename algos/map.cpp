@@ -182,11 +182,12 @@ void Map::update_border_one(const vec2i& v)
 
 void Map::update_border(const vec2i& v)
 {
-    update_border_one(v);
-    
-    for (const auto& to_neighbor : to_neighbors)
+    for (int i = -2; i <= 2; ++i)
     {
-        update_border_one(v + to_neighbor);
+        for (int j = -2; j <= 2; ++j) 
+        {
+            update_border_one(v + vec2i{i, j});
+        }
     }
 }
 
@@ -229,7 +230,7 @@ void Map::randomize_grid()
             if (i < 50) node->get().set_district((j > 50) ? 0 : 1);
             else        node->get().set_district((j > 50) ? 2 : 3);
 
-            node->get().set_population(Party{0}, 1); // Map::random.next(0, 50);
+            // node->get().set_population(Party{0}, 1); // Map::random.next(0, 50);
             metric.add_node(pos, node->get());
         }
     }
@@ -248,7 +249,7 @@ void Map::randomize_voronoi(int districts)
 
     for (auto& [position, node] : node_map) 
     {
-        node.clear_population();
+        // node.clear_population();
 
         District min_district = -1;
         double min_distance = std::numeric_limits<double>::max();
@@ -265,7 +266,7 @@ void Map::randomize_voronoi(int districts)
 
         if (min_district >= 0) 
         {
-            node.set_population(Party{0}, random.next(0, 50));
+            // node.set_population(Party{0}, random.next(0, 50));
             node.set_district(min_district);
             metric.add_node(position, node);
         }
@@ -285,9 +286,40 @@ void Map::find_borders()
     }
 }
 
+double Map::calculate_population(double distance) const
+{
+    return 1 + 50.0 * std::exp(-std::pow((distance/2.0), 2));
+}
+
+void Map::assign_population(const vec2i& city)
+{
+    for (auto& [pos, node]: node_map)
+    {
+        double population = calculate_population(pos.distance(city));
+        node.set_population(Party{0}, node.get_population() + population);
+    }
+}
+
+void Map::assign_population(int cities) 
+{   
+    while (cities --> 0) 
+        assign_population(get_random_node_location());
+}
+
+void Map::clear_population()
+{
+    for (auto& [pos, node]: node_map)
+    {
+        node.set_population(Party{0}, 0);
+    }
+}
+
 void Map::reset(int districts)
 {
     metric.clear();
+    
+    clear_population();
+    assign_population(districts * 2);
     
     randomize_voronoi(districts);
     // randomize_grid();
@@ -299,6 +331,11 @@ void Map::reset(int districts)
 
 void Map::evolve(const vec2i& v)
 {
+
+    if (!is_border(v)) {
+        remove_border_one(v);
+        return;
+    }
     if (will_island(v)) {
         evolve(get_random_border_location());
         return;
@@ -325,5 +362,20 @@ void Map::evolve(const vec2i& v)
 
 void Map::evolve() 
 {
+    // sanity_check();
     evolve(get_random_border_location());
+}
+
+void Map::sanity_check()
+{
+    std::size_t s1 = border_layout.size();
+    std::size_t s2 = border_set.size();
+
+    if (s1!=s2) { std::cerr << "UHOH UHOH" << std::endl;}
+
+    for (const auto& node : border_layout)
+    {
+        if (border_set.count(node) == 0)
+            std::cerr << "PEEP POOP" << std::endl;
+    }
 }

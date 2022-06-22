@@ -6,30 +6,6 @@ using namespace gl;
 
 #include <iostream>
 
-//
-
-struct draw_rectangle : public behavior
-{
-    draw_rectangle() { }
-
-    void execute(engine& engine)
-    {
-        sf::RectangleShape rect;
-        gm::vec2d rpos{0, 0};
-        gm::vec2d rsize{10, 10};
-        rect.setPosition(engine.get_camera().world_to_screen(rpos).to<float>());
-        rect.setSize((engine.get_camera().world_to_screen(rpos + rsize) - engine.get_camera().world_to_screen(rpos)).to<float>());
-        rect.setFillColor(sf::Color::Blue);
-
-        engine.get_window().draw(rect);
-    }
-
-    void handle_event(engine& engine, const sf::Event& event) 
-    {
-    }
-
-};
-
 camera& engine::get_camera() { return _camera; }
 const camera& engine::get_camera() const { return _camera; }
 
@@ -45,6 +21,12 @@ engine::engine(unsigned int width, unsigned int height) :
     behaviors {}
 {
     behaviors.push_back(std::make_unique<pan_zoom>());
+
+    if (is_running())
+    {
+        _window.clear(sf::Color::White);
+        _window.display();
+    }
 }
 
 engine& engine::add_behavior(std::unique_ptr<behavior>&& bhv)

@@ -1,4 +1,5 @@
 #include "./metric.hpp"
+#include <algorithm>
 using namespace gm;
 
 // Base Metric
@@ -190,4 +191,9 @@ double PartyPopulationMetric::get_average_percent_error()
     }
 
     return result;
+}
+
+bool PartyPopulationMetric::contains(District d) const
+{
+    return party_population_map.find(d) != party_population_map.end();
 }

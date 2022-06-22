@@ -164,17 +164,26 @@ void MapBehavior::draw_center(engine& e)
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
-void MapBehavior::draw_metric(engine& e)
+void MapBehavior::draw_info(engine& e)
 {
-    auto _to_write = "Using: " + map.get_metric().get_name();
-    sf::Text text;
-
-    text.setFont(font);
-    text.setString(_to_write);
-    text.setCharacterSize(32);
-    text.setFillColor(sf::Color::Black);
-
-    e.get_window().draw(text);
+    std::pair<std::string, unsigned int> to_write_table[] = 
+    {
+        { "Using: " + map.get_metric().get_name(), 32 },
+        { paused ? "Paused" : "Running", 16 },
+    };
+    
+    sf::Vector2f pos = { 0, 0 };
+    for (const auto& to_write : to_write_table)
+    {
+        sf::Text text;
+        text.setPosition(pos);
+        pos += sf::Vector2f{0, to_write.second};
+        text.setFont(font);
+        text.setString(to_write.first);
+        text.setCharacterSize(to_write.second);
+        text.setFillColor(sf::Color::Black);
+        e.get_window().draw(text);
+    }
 }
 
 void MapBehavior::execute(engine& e)
@@ -203,7 +212,7 @@ void MapBehavior::execute(engine& e)
         break;
     };
 
-    draw_metric(e);
+    draw_info(e);
     draw_hovered(e);
 }
 

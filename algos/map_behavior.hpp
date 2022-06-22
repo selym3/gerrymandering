@@ -42,7 +42,7 @@ private:
     void draw_hovered(gl::engine&);
     void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
 
-    void draw_metric(gl::engine&);
+    void draw_info(gl::engine&);
 
 private:
     Map map;

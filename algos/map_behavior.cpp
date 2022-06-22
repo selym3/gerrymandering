@@ -111,6 +111,31 @@ void MapBehavior::draw_density(engine& e)
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
+void MapBehavior::draw_center(engine& e)
+{   
+
+    std::unordered_map<District, vec2i> cnt;
+    std::unordered_map<District, int> pop;
+    // int total_pop = 0;
+    for (const auto &[pos, n] : map.get_node_map())
+    {
+        if (cnt.count(n.get_district()) == 0) cnt[n.get_district()] = vec2i{0, 0};
+        if (pop.count(n.get_district()) == 0) pop[n.get_district()] = 0;
+        pop[n.get_district()] += n.get_population();
+        cnt[n.get_district()] += n.get_population() * pos;
+    }
+    for (auto& [d, p] : cnt) p/=pop[d];
+
+    std::vector<sf::Vertex> cells;
+    for (const auto &[pos, n] : map.get_node_map())
+    {
+        sf::Uint8 f = static_cast<sf::Uint8>(std::pow((255 - pos.distance(cnt[n.get_district()]))/255, 3) * 255);
+        sf::Color color = sf::Color{f, f, f};
+        draw_cell(e, cells, pos, color);
+    }
+    e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
+
 void MapBehavior::execute(engine& e)
 {
     bool space_pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
@@ -127,6 +152,10 @@ void MapBehavior::execute(engine& e)
     case DrawMode::Both:
         draw_both(e);
         break;
+    case DrawMode::Center:
+        draw_center(e);
+        break;
+
     default:
         mode = DrawMode::Districts;
         break;

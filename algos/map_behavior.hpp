@@ -19,6 +19,7 @@ private:
         Districts,
         Density,
         Both,
+        Center,
 
         Count
     };
@@ -27,24 +28,24 @@ private:
     void draw_districts(gl::engine&);
     void draw_density(gl::engine&);
     void draw_both(gl::engine&);
+    void draw_center(gl::engine&);
 
     void draw_hovered(gl::engine&);
+    void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
 
 private:
     Map map;
     int districts;
 
-    std::vector<sf::Color> colors;
+private:
+    DrawMode mode;
 
     bool show_borders;
-
-    void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
-
-    vec2i get_mouse_cell(const gl::engine&) const;
-
+    std::vector<sf::Color> colors;
     int max_population;
 
-    DrawMode mode;
+private:
+    vec2i get_mouse_cell(const gl::engine&) const;
 
 public:
     MapBehavior(int districts);

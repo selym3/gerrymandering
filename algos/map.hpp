@@ -28,7 +28,8 @@ public:
 // private:
     const static Random::Engine random;
     const static std::vector<vec2i> to_neighbors;
-
+    const static std::vector<vec2i> to_eight_neighbors;
+    bool will_island(const vec2i& v) const;
     // const static Populizer random_population;
 
 /*********

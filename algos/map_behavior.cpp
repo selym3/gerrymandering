@@ -26,9 +26,9 @@ MapBehavior::MapBehavior(int districts) :
     evolving { true },
     evolver_thread
     {
-        [](Map& m, int districts, std::atomic<bool>& paused, std::atomic<bool>& running)
+        [](Map& map, int districts, std::atomic<bool>& paused, std::atomic<bool>& running)
         {
-            while (running) if (!paused) m.evolve();
+            while (running) if (!paused) map.evolve();
         }, 
         std::ref(map), 
         districts,
@@ -166,7 +166,7 @@ void MapBehavior::draw_center(engine& e)
 
 void MapBehavior::draw_metric(engine& e)
 {
-    auto _to_write = "Using: " + map.metric.get_name();
+    auto _to_write = "Using: " + map.get_metric().get_name();
     sf::Text text;
 
     text.setFont(font);

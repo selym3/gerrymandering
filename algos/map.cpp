@@ -275,6 +275,8 @@ void Map::randomize_voronoi(int districts)
     // reset_metric();
 }
 
+const Metric& Map::get_metric() const { return metric; }
+
 void Map::find_borders()
 {
     border_layout.clear();

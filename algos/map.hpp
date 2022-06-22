@@ -82,19 +82,20 @@ private:
 
     // if this pos is a border, adds to the border set and layout.
     // otherwise, it removes the pos from the border set and layout.
-public:    void update_border_one(const vec2i& pos);
+    void update_border_one(const vec2i& pos);
 
     // updates the pos and surrounding neighbors whose neighbor status
     // may have changed as a result of pos changing
-public:   void update_border(const vec2i& pos);
+    void update_border(const vec2i& pos);
 
 private:
     const vec2i& get_random_border_location() const;
 
+    std::unordered_set<District> get_neighboring_districts(const vec2i& v) const;
+
 public: 
     bool is_border(const vec2i& pos) const;
 
-    std::unordered_set<District> get_neighboring_districts(const vec2i& v) const;
 
 /*******************
  * FACTORY METHODS *
@@ -123,22 +124,23 @@ private:
     void assign_population(Party party, const vec2i& city, double radius, double max_population);
     void assign_population(int cities);
 
-public: // temporarily, for testing border updating
+private: 
     void find_borders();
 
 public:
     Map& reset(int districts);
-    // void assign_nearest(const std::vector<vec2i>& centroids);
 
 
 /*************
  * EVOLUTION *
  *************/ 
 
-// private:
-public:
+private:
     AlternatingMetric metric;
     double _rate;
+
+public:
+    const Metric& get_metric() const;
 
 public:
     void evolve(const vec2i& v);

@@ -70,15 +70,35 @@ void MapBehavior::draw_hovered(engine& e)
     e.get_window().draw(hovered.data(), hovered.size(), sf::LineStrip);
 }
 
+void MapBehavior::draw_both(engine& e)
+{
+    std::vector<sf::Vertex> cells;
+    for (const auto &[pos, n] : map.get_node_map())
+    {
+        sf::Color color = sf::Color{100, 100, 100};
+        if (show_borders && map.is_border(pos))
+            color = sf::Color::Black;
+        else if (n.get_district() >= 0 && n.get_district() < districts)
+            color = colors[n.get_district()];
+
+        double f = (1.0 * n.get_population()) / max_population;
+        color = sf::Color(
+            static_cast<sf::Uint8>(color.r * f), 
+            static_cast<sf::Uint8>(color.g * f), 
+            static_cast<sf::Uint8>(color.b * f)
+        );
+        draw_cell(e, cells, pos, color);
+    }
+    e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
+
 void MapBehavior::draw_density(engine& e)
 {
     std::vector<sf::Vertex> cells;
     for (const auto &[pos, n] : map.get_node_map())
     {
-        double peep = 255 - (255.0 * n.get_population()) / max_population;
-        int poop = static_cast<int>(peep);
-
-        sf::Color color = sf::Color{poop, poop, poop};
+        sf::Uint8 f = static_cast<sf::Uint8>(255 - (255.0 * n.get_population()) / max_population);
+        sf::Color color = sf::Color{f, f, f};
         draw_cell(e, cells, pos, color);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
@@ -96,6 +116,9 @@ void MapBehavior::execute(engine& e)
         break;
     case DrawMode::Density: 
         draw_density(e); 
+        break;
+    case DrawMode::Both:
+        draw_both(e);
         break;
     default:
         mode = DrawMode::Districts;

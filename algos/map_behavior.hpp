@@ -18,6 +18,7 @@ private:
     {
         Districts,
         Density,
+        Both,
 
         Count
     };
@@ -25,6 +26,8 @@ private:
 private:
     void draw_districts(gl::engine&);
     void draw_density(gl::engine&);
+    void draw_both(gl::engine&);
+
     void draw_hovered(gl::engine&);
 
 private:

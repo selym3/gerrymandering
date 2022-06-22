@@ -288,7 +288,7 @@ void Map::find_borders()
 
 double Map::calculate_population(double distance) const
 {
-    return 1 + 50.0 * std::exp(-std::pow((distance/2.0), 2));
+    return 1 + 50.0 * std::exp(-std::pow((distance/10.0), 2));
 }
 
 void Map::assign_population(const vec2i& city)

@@ -17,7 +17,7 @@ bool Map::will_island(const vec2i& v) const
     // Go counterclockwise
     for (const vec2i& neighbor: to_eight_neighbors) {
 
-        if (this_district == node_map.at(v + neighbor).get_district()) {
+        if (node_map.count(v + neighbor) && this_district == node_map.at(v + neighbor).get_district()) {
             if (!last_was_this_district) {
                 ++count_contiguous_regions;
             }
@@ -30,8 +30,8 @@ bool Map::will_island(const vec2i& v) const
 
     // You overcounted if your first and last node are the same but separated on the other end
     if (
-        this_district == node_map.at(v + to_eight_neighbors.front()).get_district() && 
-        this_district == node_map.at(v + to_eight_neighbors.back()).get_district() &&
+        node_map.count(v + to_eight_neighbors.front()) && this_district == node_map.at(v + to_eight_neighbors.front()).get_district() && 
+        node_map.count(v + to_eight_neighbors.back()) && this_district == node_map.at(v + to_eight_neighbors.back()).get_district() &&
         count_contiguous_regions > 1
     ) {
         --count_contiguous_regions;

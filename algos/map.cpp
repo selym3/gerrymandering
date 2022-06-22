@@ -1,6 +1,6 @@
 #include "./map.hpp"
 
-// #include <iostream>
+#include <iostream>
 
 using namespace gm;
 // Utils

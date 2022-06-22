@@ -49,7 +49,7 @@ MapBehavior::MapBehavior(int districts) :
         colors.push_back(hsv(static_cast<int>((i * 360.0)/districts), 1, 1));
     }
 
-    if (font.loadFromFile("./resources/arial.ttf"))std::cerr << " no font i guess " << std::endl;
+    if (!font.loadFromFile("./resources/arial.ttf"))std::cerr << " no font i guess " << std::endl;
 }
 
 void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const vec2i& pos, sf::Color color, bool loop) const
@@ -166,12 +166,12 @@ void MapBehavior::draw_center(engine& e)
 
 void MapBehavior::draw_metric(engine& e)
 {
-    auto _to_write = map.metric.get_active();
+    auto _to_write = "Using: " + map.metric.get_name();
     sf::Text text;
 
     text.setFont(font);
     text.setString(_to_write);
-    text.setCharacterSize(64);
+    text.setCharacterSize(32);
     text.setFillColor(sf::Color::Black);
 
     e.get_window().draw(text);

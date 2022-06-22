@@ -1,5 +1,6 @@
 #include "./metric.hpp"
 #include <algorithm>
+#include <iostream>
 using namespace gm;
 
 // Base Metric
@@ -36,6 +37,11 @@ void Metric::add_node(const vec2i& pos, const Node& node)
 void Metric::del_node(const vec2i& pos, const Node& node)
 {
 
+}
+
+std::string Metric::get_name() const 
+{
+    return "Metric";
 }
 
 // Population Metric
@@ -105,6 +111,9 @@ bool PopulationMetric::contains(District d) const
 {
     return population_map.find(d) != population_map.end();
 }
+
+
+std::string PopulationMetric::get_name() const { return "Population"; }
 
 
 PartyPopulationMetric::PartyPopulationMetric() 
@@ -225,6 +234,8 @@ bool PartyPopulationMetric::contains(District d) const
     return party_population_map.find(d) != party_population_map.end();
 }
 
+std::string PartyPopulationMetric::get_name() const { return "Party Population"; }
+
 CenteringMetric::CenteringMetric() :
     populations{},
     centers { }
@@ -289,6 +300,8 @@ vec2i CenteringMetric::get_center(District d) const
     return centers.at(d) / populations.at(d);
 }
 
+std::string CenteringMetric::get_name() const { return "Centering"; }
+
 
 AlternatingMetric::AlternatingMetric() :
     fixer{}, upper{}, 
@@ -342,7 +355,7 @@ bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District dis
     return get_metric().analyze(pos, node, district);
 }
 
-std::string AlternatingMetric::get_active() const
+std::string AlternatingMetric::get_name() const
 {
-    return upping ? "Party Population" : "Centering";
+    return upping ?  upper.get_name() : fixer.get_name();
 }

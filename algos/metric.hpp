@@ -1,7 +1,6 @@
 #ifndef __METRIC_HPP__
 #define __METRIC_HPP__
 
-#include <iostream>
 #include <unordered_map>
 
 #include "../util/vec2.hpp"
@@ -15,6 +14,8 @@ struct Metric
 public:
     virtual ~Metric();
     virtual void clear();
+
+    virtual std::string get_name() const;
 
 public:
     virtual void add_node(const vec2i& pos, const Node& node);
@@ -32,6 +33,8 @@ struct PopulationMetric : public Metric
 public:
     PopulationMetric();
     void clear();
+
+    std::string get_name() const;
 
 public:
     void add_node(const vec2i& pos, const Node& node);
@@ -57,6 +60,9 @@ struct PartyPopulationMetric : public Metric
 public:
     PartyPopulationMetric();
     void clear();
+
+    std::string get_name() const;
+
 public:
     void add_node(const vec2i& pos, const Node& node);
     void del_node(const vec2i& pos, const Node& node);
@@ -82,6 +88,8 @@ public:
     CenteringMetric();
     void clear() override;
 
+    std::string get_name() const;
+
 public: 
     void add_node(const vec2i& pos, const Node& node) override;
     void del_node(const vec2i& pos, const Node& node) override;
@@ -104,15 +112,14 @@ public:
     AlternatingMetric();
     void clear() override;
 
+    std::string get_name() const;
+
 public: 
     void add_node(const vec2i& pos, const Node& node) override;
     void del_node(const vec2i& pos, const Node& node) override;
 
 public:
     bool analyze(const vec2i& pos, const Node&, District district) override;
-
-public:
-    std::string get_active() const; 
 
 private:
     CenteringMetric fixer;

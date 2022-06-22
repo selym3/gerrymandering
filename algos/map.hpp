@@ -138,6 +138,7 @@ public:
 // private:
 public:
     AlternatingMetric metric;
+    double _rate;
 
 public:
     void evolve(const vec2i& v);

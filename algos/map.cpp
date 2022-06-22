@@ -37,7 +37,7 @@ bool Map::will_island(const vec2i& v) const
         --count_contiguous_regions;
     }
 
-    return count_contiguous_regions < 2;
+    return count_contiguous_regions >= 2;
 }
 
 // const Populizer Map::random_population = [](auto a, auto b) { return random.next(0, 50); };

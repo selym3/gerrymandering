@@ -10,6 +10,10 @@ OBJS = ./bin/behavior.o ./bin/engine.o ./bin/map.o ./bin/map_behavior.o ./bin/me
 # define dependencies that call for a recompile (can be made more specific to reduce redundant recompiles)
 DEPS = ./util/vec2.hpp ./graphics/camera.hpp ./util/Random.hpp
 
+simulation : $(OBJS) $(DEPS)
+	$(CXX) $(CXXFLAGS) $(LDLIBS) ./bin/*.o simulation.cpp -o simulation
+
+
 # create output file
 all: main
 	./main
@@ -44,3 +48,4 @@ clean:
 
 ./bin/node.o : ./algos/node.cpp ./algos/node.hpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o ./bin/$(shell basename $@)
+

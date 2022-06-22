@@ -3,3 +3,6 @@ __pycache__/
 main
 .vscode/
 bin/
+*.mp4
+*.png
+*.gif

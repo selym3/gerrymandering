@@ -19,11 +19,12 @@ int main(int argc, char *argv[])
 
     int iterations = std::stoi(argv[1]);
 
-    gl::camera c{ gm::vec2d{ 500, 500 } };
+    gl::camera c{ gm::vec2d{ WINDOW_SIZE_X, WINDOW_SIZE_Y } };
     sf::RenderTexture rt;
+    rt.create(WINDOW_SIZE_X, WINDOW_SIZE_Y);
     gm::Map map { gm::Map::make_grid(100, 100) };
 
-    map.reset(3);
+    map.reset(4);
 
     std::vector<sf::Color> colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green, sf::Color::Yellow };
 

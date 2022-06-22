@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Font.hpp>
+
 #include <vector>
 
 #include <thread>
@@ -37,6 +39,8 @@ private:
     void draw_hovered(gl::engine&);
     void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
 
+    void draw_metric(gl::engine&);
+
 private:
     Map map;
     int districts;
@@ -50,6 +54,7 @@ private:
     bool show_borders;
     std::vector<sf::Color> colors;
     int max_population;
+    sf::Font font;
 
 private:
     vec2i get_mouse_cell(const gl::engine&) const;

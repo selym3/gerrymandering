@@ -14,19 +14,19 @@ using namespace gl;
 
 
 MapBehavior::MapBehavior(int districts) :
-    map { Map::make_grid(200, 200) }, 
+    map { Map::make_grid(200, 200).reset(districts) }, 
     districts { districts },
     colors {},
     show_borders { false },
     mode { DrawMode::Districts },
+    font{},
     
     evolving { true },
     evolver_thread
     {
-        [](std::reference_wrapper<Map> m, int districts, std::reference_wrapper<std::atomic<bool>> running)
+        [](Map& m, int districts, std::atomic<bool>& running)
         {
-            m.get().reset(districts);
-            while (running.get()) m.get().evolve();
+            while (running) m.evolve();
         }, 
         std::ref(map), 
         districts,
@@ -46,6 +46,7 @@ MapBehavior::MapBehavior(int districts) :
         colors.push_back(hsv(static_cast<int>((i * 360.0)/districts), 1, 1));
     }
 
+    if (font.loadFromFile("./resources/arial.ttf"))std::cerr << " no font i guess " << std::endl;
 }
 
 void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const vec2i& pos, sf::Color color, bool loop) const
@@ -150,6 +151,19 @@ void MapBehavior::draw_center(engine& e)
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
+void MapBehavior::draw_metric(engine& e)
+{
+    auto _to_write = map.metric.get_active();
+    sf::Text text;
+
+    text.setFont(font);
+    text.setString(_to_write);
+    text.setCharacterSize(64);
+    text.setFillColor(sf::Color::Black);
+
+    e.get_window().draw(text);
+}
+
 void MapBehavior::execute(engine& e)
 {
 
@@ -173,6 +187,7 @@ void MapBehavior::execute(engine& e)
         break;
     };
 
+    draw_metric(e);
     draw_hovered(e);
 }
 
@@ -186,7 +201,6 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         }
         else if (event.key.code == sf::Keyboard::D)
         {
-
             mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))+1)%static_cast<std::size_t>(DrawMode::Count));
         }
     }

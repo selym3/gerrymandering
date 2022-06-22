@@ -127,7 +127,7 @@ public: // temporarily, for testing border updating
     void find_borders();
 
 public:
-    void reset(int districts);
+    Map& reset(int districts);
     // void assign_nearest(const std::vector<vec2i>& centroids);
 
 

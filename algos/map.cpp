@@ -319,7 +319,7 @@ void Map::clear_population()
     }
 }
 
-void Map::reset(int districts)
+Map& Map::reset(int districts)
 {
     metric.clear();
     clear_population();
@@ -327,6 +327,8 @@ void Map::reset(int districts)
     randomize_voronoi(districts);
     // randomize_grid();
     find_borders();
+
+    return *this;
 }
 
 // Evolution //

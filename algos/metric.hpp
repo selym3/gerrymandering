@@ -101,7 +101,7 @@ private:
 struct AlternatingMetric : public Metric
 {
 public:
-    AlternatingMetric(int period = 100);
+    AlternatingMetric();
     void clear() override;
 
 public: 
@@ -111,12 +111,18 @@ public:
 public:
     bool analyze(const vec2i& pos, const Node&, District district) override;
 
+public:
+    std::string get_active() const; 
+
 private:
     CenteringMetric fixer;
     PartyPopulationMetric upper;
     
     int evolutions;
-    int period;
+    bool upping;
+
+    int fix_period;
+    int up_period;
 
     Metric& get_metric();
 };

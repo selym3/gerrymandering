@@ -207,10 +207,10 @@ double PartyPopulationMetric::get_average_percent_error() const
 
     for (auto& [party, num_representatives] : parties_to_proportion_sum) {
         double expected_winners = party_to_total_supporters.at(party) * party_population_map.size() / (double)total_population;
-        std::cout << "Party " << party << ":\n";
-        std::cout << "Expected/should win: " << expected_winners << " districts.\n";
-        std::cout << "Districts won: " << parties_to_winners[party] << ".\n";
-        std::cout << "Sum of each winner's proportion of their captured voters out of their district population: " << parties_to_proportion_sum[party] << ".\n";
+        // std::cout << "Party " << party << ":\n";
+        // std::cout << "Expected/should win: " << expected_winners << " districts.\n";
+        // std::cout << "Districts won: " << parties_to_winners[party] << ".\n";
+        // std::cout << "Sum of each winner's proportion of their captured voters out of their district population: " << parties_to_proportion_sum[party] << ".\n";
         
         // L2 distance
         result += (num_representatives - expected_winners) * (num_representatives - expected_winners);
@@ -290,8 +290,9 @@ vec2i CenteringMetric::get_center(District d) const
 }
 
 
-AlternatingMetric::AlternatingMetric(int period)
-    : fixer{}, upper{}, evolutions{0}, period { period }
+AlternatingMetric::AlternatingMetric() :
+    fixer{}, upper{}, 
+    evolutions{0}, up_period { 5000 }, fix_period { 10000 }, upping { false }
 {
 }
 
@@ -300,7 +301,7 @@ Metric& AlternatingMetric::get_metric()
     Metric& a = fixer;
     Metric& b = upper;
 
-    return ((evolutions/period) % 2) == 0 ? a : b;
+    return upping ? b : a;
 }
 
 void AlternatingMetric::clear()
@@ -323,6 +324,25 @@ void AlternatingMetric::del_node(const vec2i& pos, const Node& node)
 
 bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District district)
 {
+    evolutions++;
+    if (upping) {
+        if (evolutions > up_period)
+        {
+            evolutions = 0;
+            upping = false;
+        }
+    } else {
+        if (evolutions > fix_period)
+        {
+            evolutions = 0;
+            upping = true;
+        }
+    }
+
     return get_metric().analyze(pos, node, district);
 }
 
+std::string AlternatingMetric::get_active() const
+{
+    return upping ? "Party Population" : "Centering";
+}

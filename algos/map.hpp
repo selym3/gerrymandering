@@ -119,8 +119,8 @@ private:
     void randomize_voronoi(int districts);
     void randomize_grid();
 
-    double calculate_population(double distance) const;
-    void assign_population(const vec2i& city);
+    double calculate_population(double distance, double radius, double max_population) const;
+    void assign_population(Party party, const vec2i& city, double radius, double max_population);
     void assign_population(int cities);
 
 public: // temporarily, for testing border updating
@@ -137,7 +137,7 @@ public:
 
 // private:
 public:
-    PopulationMetric metric;
+    PartyPopulationMetric metric;
 
 public:
     void evolve(const vec2i& v);

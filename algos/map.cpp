@@ -286,24 +286,29 @@ void Map::find_borders()
     }
 }
 
-double Map::calculate_population(double distance) const
+double Map::calculate_population(double distance, double radius, double max_population) const
 {
-    return 1 + 50.0 * std::exp(-std::pow((distance/10.0), 2));
+    return 1 + max_population * std::exp(-std::pow(distance/radius, 2));
 }
 
-void Map::assign_population(const vec2i& city)
+void Map::assign_population(Party p, const vec2i& city, double radius, double max_population)
 {
     for (auto& [pos, node]: node_map)
     {
-        double population = calculate_population(pos.distance(city));
-        node.set_population(Party{0}, node.get_population() + population);
+        double population = calculate_population(pos.distance(city), radius, max_population);
+        node.set_population(p, node.get_population(p) + population);
     }
 }
 
 void Map::assign_population(int cities) 
 {   
     while (cities --> 0) 
-        assign_population(get_random_node_location());
+    {
+        auto p = get_random_node_location();
+        bool republican = (cities % 2) == 0;
+        assign_population(Party{0}, p, 10.0, republican ? 100 : 50);
+        assign_population(Party{1}, p, 10.0, republican ? 50 : 100);
+    }
 }
 
 void Map::clear_population()
@@ -316,15 +321,23 @@ void Map::clear_population()
 
 void Map::reset(int districts)
 {
+    std::cout << "reset(districts): 1" << std::endl;
     metric.clear();
     
+    std::cout << "reset(districts): 2" << std::endl;
     clear_population();
+
+    std::cout << "reset(districts): 3" << std::endl;
     assign_population(districts * 2);
     
+    std::cout << "reset(districts): 4" << std::endl;
     randomize_voronoi(districts);
     // randomize_grid();
 
+    std::cout << "reset(districts): 5" << std::endl;
     find_borders();
+
+    std::cout << "reset(districts): 6" << std::endl;
 }
 
 // Evolution //

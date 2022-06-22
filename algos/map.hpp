@@ -137,7 +137,7 @@ public:
 
 // private:
 public:
-    PartyPopulationMetric metric;
+    CenteringMetric metric;
 
 public:
     void evolve(const vec2i& v);

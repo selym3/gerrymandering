@@ -224,3 +224,69 @@ bool PartyPopulationMetric::contains(District d) const
 {
     return party_population_map.find(d) != party_population_map.end();
 }
+
+CenteringMetric::CenteringMetric() :
+    populations{},
+    centers { }
+{
+}
+
+void CenteringMetric::clear()
+{
+    populations.clear();
+    centers.clear();
+}
+
+void CenteringMetric::add_node(const vec2i& pos, const Node& node)
+{
+    if (!contains(node.get_district())) 
+    {
+        centers[node.get_district()] = vec2i{ 0, 0 };
+        populations[node.get_district()] = 0;
+    }
+    populations[node.get_district()] += node.get_population();
+    centers[node.get_district()] += pos * node.get_population();
+}
+
+void CenteringMetric::del_node(const vec2i& pos, const Node& node)
+{
+    if (!contains(node.get_district()))
+    {
+        std::cerr << "something funny is going on " << std::endl;
+        return;
+    }
+    populations[node.get_district()] -= node.get_population();
+    centers[node.get_district()] -= pos * node.get_population();
+}
+
+bool CenteringMetric::analyze(const vec2i& pos, const Node& node, District district)
+{
+    auto m1 = get_distance(pos, node.get_district());
+    move_node(pos, node, node.get_district(), district);
+    auto m2 = get_distance(pos, district);
+    move_node(pos, node, district, node.get_district());
+
+    return m1 > m2;
+}
+
+double CenteringMetric::get_distance(const vec2i& pos, District d) const
+{
+    return pos.distance(get_center(d));
+}
+
+bool CenteringMetric::contains(District d) const
+{
+    return centers.count(d) > 0 && populations.count(d) > 0;
+}
+
+vec2i CenteringMetric::get_center(District d) const
+{
+    if (!contains(d)) 
+    {
+        std::cout << "something weird going on here " << std::endl;
+        return vec2i{-1, -1};
+    }
+    return centers.at(d) / populations.at(d);
+}
+
+

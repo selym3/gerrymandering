@@ -44,7 +44,7 @@ bool Map::will_island(const vec2i& v) const
 // Factory Methods //
 
 Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{},
-             districts { 0 }
+             districts { 0 }, _rate { 0.8 }
 {
 }
 
@@ -319,14 +319,16 @@ void Map::clear_population()
     }
 }
 
-void Map::reset(int districts)
+Map& Map::reset(int districts)
 {
     metric.clear();
     clear_population();
-    assign_population(districts * 2);
+    assign_population(districts);
     randomize_voronoi(districts);
     // randomize_grid();
     find_borders();
+
+    return *this;
 }
 
 // Evolution //
@@ -351,11 +353,11 @@ void Map::evolve(const vec2i& v)
         if (district == node.get_district()) continue;
         
 
-        if (metric.analyze(v, node, district)) 
+        if (metric.analyze(v, node, district) && random.next(0.0, 1.0) < _rate) 
         {
             set_district(v, district);
             update_border(v);
-        } 
+        }
 
         //just try one for now
         break;

@@ -207,10 +207,10 @@ double PartyPopulationMetric::get_average_percent_error() const
 
     for (auto& [party, num_representatives] : parties_to_proportion_sum) {
         double expected_winners = party_to_total_supporters.at(party) * party_population_map.size() / (double)total_population;
-        std::cout << "Party " << party << ":\n";
-        std::cout << "Expected/should win: " << expected_winners << " districts.\n";
-        std::cout << "Districts won: " << parties_to_winners[party] << ".\n";
-        std::cout << "Sum of each winner's proportion of their captured voters out of their district population: " << parties_to_proportion_sum[party] << ".\n";
+        // std::cout << "Party " << party << ":\n";
+        // std::cout << "Expected/should win: " << expected_winners << " districts.\n";
+        // std::cout << "Districts won: " << parties_to_winners[party] << ".\n";
+        // std::cout << "Sum of each winner's proportion of their captured voters out of their district population: " << parties_to_proportion_sum[party] << ".\n";
         
         // L2 distance
         result += (num_representatives - expected_winners) * (num_representatives - expected_winners);
@@ -290,3 +290,59 @@ vec2i CenteringMetric::get_center(District d) const
 }
 
 
+AlternatingMetric::AlternatingMetric() :
+    fixer{}, upper{}, 
+    evolutions{0}, up_period { 100000 }, fix_period { 10000 }, upping { true }
+{
+}
+
+Metric& AlternatingMetric::get_metric() 
+{
+    Metric& a = fixer;
+    Metric& b = upper;
+
+    return upping ? b : a;
+}
+
+void AlternatingMetric::clear()
+{
+    fixer.clear();
+    upper.clear();
+}
+
+void AlternatingMetric::add_node(const vec2i& pos, const Node& node) 
+{
+    fixer.add_node(pos, node);
+    upper.add_node(pos, node);
+}
+
+void AlternatingMetric::del_node(const vec2i& pos, const Node& node)
+{
+    fixer.del_node(pos, node);
+    upper.del_node(pos, node);
+}
+
+bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District district)
+{
+    evolutions++;
+    if (upping) {
+        if (evolutions > up_period)
+        {
+            evolutions = 0;
+            upping = false;
+        }
+    } else {
+        if (evolutions > fix_period)
+        {
+            evolutions = 0;
+            // upping = true;
+        }
+    }
+
+    return get_metric().analyze(pos, node, district);
+}
+
+std::string AlternatingMetric::get_active() const
+{
+    return upping ? "Party Population" : "Centering";
+}

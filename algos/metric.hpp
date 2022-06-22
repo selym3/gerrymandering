@@ -98,6 +98,35 @@ private:
     vec2i get_center(District d) const; 
 };
 
+struct AlternatingMetric : public Metric
+{
+public:
+    AlternatingMetric();
+    void clear() override;
+
+public: 
+    void add_node(const vec2i& pos, const Node& node) override;
+    void del_node(const vec2i& pos, const Node& node) override;
+
+public:
+    bool analyze(const vec2i& pos, const Node&, District district) override;
+
+public:
+    std::string get_active() const; 
+
+private:
+    CenteringMetric fixer;
+    PartyPopulationMetric upper;
+    
+    int evolutions;
+    bool upping;
+
+    int fix_period;
+    int up_period;
+
+    Metric& get_metric();
+};
+
 }
 
 

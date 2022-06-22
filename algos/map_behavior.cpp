@@ -12,14 +12,30 @@ using namespace gl;
 
 #include "../util/make_hsv.hpp"
 
+
 MapBehavior::MapBehavior(int districts) :
-    map { Map::make_grid(200, 200) }, 
+    map { Map::make_grid(200, 200).reset(districts) }, 
+    _og { map },
     districts { districts },
     colors {},
     show_borders { false },
-    mode { DrawMode::Districts }
+    mode { DrawMode::Districts },
+    font{},
+    
+    paused { true } ,
+    evolving { true },
+    evolver_thread
+    {
+        [](Map& m, int districts, std::atomic<bool>& paused, std::atomic<bool>& running)
+        {
+            while (running) if (!paused) m.evolve();
+        }, 
+        std::ref(map), 
+        districts,
+        std::ref(paused),
+        std::ref(evolving)
+    }
 {
-    map.reset(districts);
 
     max_population = -1;
     for (const auto& [pos, node] : map.get_node_map())
@@ -32,6 +48,8 @@ MapBehavior::MapBehavior(int districts) :
     {
         colors.push_back(hsv(static_cast<int>((i * 360.0)/districts), 1, 1));
     }
+
+    if (font.loadFromFile("./resources/arial.ttf"))std::cerr << " no font i guess " << std::endl;
 }
 
 void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const vec2i& pos, sf::Color color, bool loop) const
@@ -51,7 +69,7 @@ vec2i MapBehavior::get_mouse_cell(const engine& e) const
     return mouse_cell;
 }
 
-void MapBehavior::draw_districts(engine& e)
+void MapBehavior::draw_map(engine& e, const Map& map)
 {
     // draw the entire map
     std::vector<sf::Vertex> cells;
@@ -66,6 +84,16 @@ void MapBehavior::draw_districts(engine& e)
         draw_cell(e, cells, pos, color);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
+
+void MapBehavior::draw_districts(engine& e)
+{
+    draw_map(e, map);
+}
+
+void MapBehavior::draw_start(engine& e)
+{
+    draw_map(e, _og);
 }
 
 void MapBehavior::draw_hovered(engine& e)
@@ -129,22 +157,36 @@ void MapBehavior::draw_center(engine& e)
     std::vector<sf::Vertex> cells;
     for (const auto &[pos, n] : map.get_node_map())
     {
-        sf::Uint8 f = static_cast<sf::Uint8>(std::pow((255 - pos.distance(cnt[n.get_district()]))/255, 3) * 255);
+        sf::Uint8 f = static_cast<sf::Uint8>(255 * std::exp(-std::pow(pos.distance(cnt[n.get_district()]) / 32, 2)));
         sf::Color color = sf::Color{f, f, f};
         draw_cell(e, cells, pos, color);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
+void MapBehavior::draw_metric(engine& e)
+{
+    auto _to_write = map.metric.get_active();
+    sf::Text text;
+
+    text.setFont(font);
+    text.setString(_to_write);
+    text.setCharacterSize(64);
+    text.setFillColor(sf::Color::Black);
+
+    e.get_window().draw(text);
+}
+
 void MapBehavior::execute(engine& e)
 {
-    bool space_pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
-    for (int i = 0; !space_pressed && i < 64; ++i) map.evolve();
 
     switch (mode)
     {
     case DrawMode::Districts: 
         draw_districts(e); 
+        break;
+    case DrawMode::Start:
+        draw_start(e);
         break;
     case DrawMode::Density: 
         draw_density(e); 
@@ -161,6 +203,7 @@ void MapBehavior::execute(engine& e)
         break;
     };
 
+    draw_metric(e);
     draw_hovered(e);
 }
 
@@ -168,26 +211,21 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
 {
     if (event.type == sf::Event::KeyPressed)
     {
-        if (event.key.code == sf::Keyboard::Q) 
-        {
-            map.reset(districts);
-        }
-        else if (event.key.code == sf::Keyboard::W)
+        if (event.key.code == sf::Keyboard::W)
         {
             show_borders = !show_borders;
         }
-        else if (event.key.code == sf::Keyboard::E) 
-        {
-            map.evolve();
-        }
-        else if (event.key.code == sf::Keyboard::R) 
-        {
-            map.find_borders();
-        }
         else if (event.key.code == sf::Keyboard::D)
         {
-
             mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))+1)%static_cast<std::size_t>(DrawMode::Count));
+        }
+        else if (event.key.code == sf::Keyboard::A)
+        {
+            mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))-1)%static_cast<std::size_t>(DrawMode::Count));
+        }
+        else if (event.key.code == sf::Keyboard::Space)
+        {
+            paused = !paused;
         }
     }
 
@@ -203,34 +241,11 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
             std::cout << "\tDistrict: " << node->get().get_district() << "\n";
             std::cout << "\tPopulation: " << node->get().get_population() << "\n";
         }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-        {
-            if (btn == sf::Mouse::Left)
-            {
-                if (node.has_value())
-                {
-                    District d1 = node->get().get_district();
-                    node->get().set_district((node->get().get_district()+1)%districts);
-
-                    map.metric.move_node(pos, node->get(), d1, node->get().get_district());
-                    map.update_border(pos);
-                }
-            }
-            else if (btn == sf::Mouse::Right)
-            {
-                if (node.has_value())
-                {
-                    map.evolve(pos);
-                }
-            }
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-        {
-            if (btn == sf::Mouse::Left)
-            {
-                map.update_border_one(pos);
-            }
-        }
     }
+}
+
+MapBehavior::~MapBehavior()
+{
+    evolving = false;
+    evolver_thread.join();
 }

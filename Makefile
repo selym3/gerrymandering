@@ -1,5 +1,5 @@
 CXX 	 = g++
-LDLIBS   = -lsfml-window -lsfml-graphics -lsfml-system
+LDLIBS   = -lsfml-window -lsfml-graphics -lsfml-system -pthread
 CXXFLAGS = -std=c++17 -Wall -Wextra -Wconversion
 
 .SUFFIXES = .cpp .o

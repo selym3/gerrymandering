@@ -11,11 +11,20 @@ using namespace gl;
 #include <iostream>
 
 MapBehavior::MapBehavior(int districts) :
-    map { Map::make_grid(100, 100) }, 
+    map { Map::make_grid(200, 200) }, 
     districts { districts },
     colors { sf::Color::Red, sf::Color::Blue, sf::Color::Green, sf::Color::Yellow },
-    show_borders { false }
+    show_borders { false },
+    mode { DrawMode::Districts }
 {
+    map.reset(districts);
+
+    max_population = -1;
+    for (const auto& [pos, node] : map.get_node_map())
+    {
+        if (node.get_population() > max_population)
+            max_population = node.get_population();
+    }
 }
 
 void MapBehavior::draw_cell(engine& e, std::vector<sf::Vertex>& vertices, const vec2i& pos, sf::Color color, bool loop) const
@@ -35,12 +44,8 @@ vec2i MapBehavior::get_mouse_cell(const engine& e) const
     return mouse_cell;
 }
 
-void MapBehavior::execute(engine& e)
+void MapBehavior::draw_districts(engine& e)
 {
-    // fast evolve (change to a toggle)
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-       map.evolve();
-
     // draw the entire map
     std::vector<sf::Vertex> cells;
     for (const auto &[pos, n] : map.get_node_map())
@@ -54,12 +59,50 @@ void MapBehavior::execute(engine& e)
         draw_cell(e, cells, pos, color);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
 
+void MapBehavior::draw_hovered(engine& e)
+{
     // draw the hovered cell
     std::vector<sf::Vertex> hovered;
     vec2i mouse_cell = get_mouse_cell(e);
     if (map.has_node(mouse_cell)) draw_cell(e, hovered, mouse_cell, sf::Color::Black, true);
     e.get_window().draw(hovered.data(), hovered.size(), sf::LineStrip);
+}
+
+void MapBehavior::draw_density(engine& e)
+{
+    std::vector<sf::Vertex> cells;
+    for (const auto &[pos, n] : map.get_node_map())
+    {
+        double peep = 255 - (255.0 * n.get_population()) / max_population;
+        int poop = static_cast<int>(peep);
+
+        sf::Color color = sf::Color{poop, poop, poop};
+        draw_cell(e, cells, pos, color);
+    }
+    e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
+
+void MapBehavior::execute(engine& e)
+{
+    bool space_pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+    for (int i = 0; !space_pressed && i < 64; ++i) map.evolve();
+
+    switch (mode)
+    {
+    case DrawMode::Districts: 
+        draw_districts(e); 
+        break;
+    case DrawMode::Density: 
+        draw_density(e); 
+        break;
+    default:
+        mode = DrawMode::Districts;
+        break;
+    };
+
+    draw_hovered(e);
 }
 
 void MapBehavior::handle_event(engine& e, const sf::Event& event)
@@ -82,6 +125,11 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         {
             map.find_borders();
         }
+        else if (event.key.code == sf::Keyboard::D)
+        {
+
+            mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))+1)%static_cast<std::size_t>(DrawMode::Count));
+        }
     }
 
     else if (event.type == sf::Event::MouseButtonPressed)
@@ -89,6 +137,9 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         auto pos = get_mouse_cell(e);
         auto node = map.get_node(pos);
         auto btn = event.mouseButton.button;
+
+        if (node.has_value())
+            std::cout << node->get().get_population() << "\n";
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
         {

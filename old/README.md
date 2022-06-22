@@ -1,2 +1,0 @@
-# gerrymandering
-google mentorship work

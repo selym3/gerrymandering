@@ -1,3 +1,0 @@
-pillow
-numpy
-imgui[sdl2]

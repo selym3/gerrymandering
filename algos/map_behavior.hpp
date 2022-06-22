@@ -23,6 +23,7 @@ private:
     enum DrawMode 
     {
         Districts,
+        Start,
         Density,
         Both,
         Center,
@@ -32,10 +33,12 @@ private:
 
 private:
     void draw_districts(gl::engine&);
+    void draw_start(gl::engine&);
     void draw_density(gl::engine&);
     void draw_both(gl::engine&);
     void draw_center(gl::engine&);
 
+    void draw_map(gl::engine&, const Map& map);
     void draw_hovered(gl::engine&);
     void draw_cell(gl::engine&, std::vector<sf::Vertex>&, const vec2i&, sf::Color, bool loop = false) const;
 
@@ -45,12 +48,14 @@ private:
     Map map;
     int districts;
     
+    std::atomic<bool> paused;
     std::atomic<bool> evolving;
     std::thread evolver_thread;
 
 private:
     DrawMode mode;
 
+    const Map _og;
     bool show_borders;
     std::vector<sf::Color> colors;
     int max_population;

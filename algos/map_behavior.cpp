@@ -15,21 +15,24 @@ using namespace gl;
 
 MapBehavior::MapBehavior(int districts) :
     map { Map::make_grid(200, 200).reset(districts) }, 
+    _og { map },
     districts { districts },
     colors {},
     show_borders { false },
     mode { DrawMode::Districts },
     font{},
     
+    paused { true } ,
     evolving { true },
     evolver_thread
     {
-        [](Map& m, int districts, std::atomic<bool>& running)
+        [](Map& m, int districts, std::atomic<bool>& paused, std::atomic<bool>& running)
         {
-            while (running) m.evolve();
+            while (running) if (!paused) m.evolve();
         }, 
         std::ref(map), 
         districts,
+        std::ref(paused),
         std::ref(evolving)
     }
 {
@@ -66,7 +69,7 @@ vec2i MapBehavior::get_mouse_cell(const engine& e) const
     return mouse_cell;
 }
 
-void MapBehavior::draw_districts(engine& e)
+void MapBehavior::draw_map(engine& e, const Map& map)
 {
     // draw the entire map
     std::vector<sf::Vertex> cells;
@@ -81,6 +84,16 @@ void MapBehavior::draw_districts(engine& e)
         draw_cell(e, cells, pos, color);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
+}
+
+void MapBehavior::draw_districts(engine& e)
+{
+    draw_map(e, map);
+}
+
+void MapBehavior::draw_start(engine& e)
+{
+    draw_map(e, _og);
 }
 
 void MapBehavior::draw_hovered(engine& e)
@@ -172,6 +185,9 @@ void MapBehavior::execute(engine& e)
     case DrawMode::Districts: 
         draw_districts(e); 
         break;
+    case DrawMode::Start:
+        draw_start(e);
+        break;
     case DrawMode::Density: 
         draw_density(e); 
         break;
@@ -202,6 +218,14 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         else if (event.key.code == sf::Keyboard::D)
         {
             mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))+1)%static_cast<std::size_t>(DrawMode::Count));
+        }
+        else if (event.key.code == sf::Keyboard::A)
+        {
+            mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))-1)%static_cast<std::size_t>(DrawMode::Count));
+        }
+        else if (event.key.code == sf::Keyboard::Space)
+        {
+            paused = !paused;
         }
     }
 

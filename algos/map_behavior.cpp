@@ -256,14 +256,14 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         else if (event.key.code == sf::Keyboard::O) 
         {
             paused = true;
-            while (evolving) std::cout << "locked" << std::endl;
+            while (evolving);
             map.set_metric(std::make_unique<PopulationMetric>());
             paused = false;
         }
         else if (event.key.code == sf::Keyboard::P) 
         {
             paused = true;
-            while (evolving) std::cout << "locked" << std::endl;
+            while (evolving);
             map.set_metric(std::make_unique<CenteringMetric>());
             paused = false;
         }

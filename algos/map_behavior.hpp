@@ -49,6 +49,7 @@ private:
     int districts;
     
     std::atomic<bool> paused;
+    std::atomic<bool> running;
     std::atomic<bool> evolving;
     std::thread evolver_thread;
 
@@ -60,6 +61,7 @@ private:
     std::vector<sf::Color> colors;
     int max_population;
     sf::Font font;
+    int ticks; 
 
 private:
     vec2i get_mouse_cell(const gl::engine&) const;

@@ -20,19 +20,30 @@ MapBehavior::MapBehavior(Map&& _map) :
     colors {},
     show_borders { false },
     mode { DrawMode::Districts },
+    ticks { 0 },
     font{},
     
     paused { true } ,
-    evolving { true },
+    evolving { false },
+    running { true },
     evolver_thread
     {
-        [](Map& map, int districts, std::atomic<bool>& paused, std::atomic<bool>& running)
+        [](Map& map, int districts, std::atomic<bool>& paused, std::atomic<bool>& running, std::atomic<bool>& evolving)
         {
-            while (running) if (!paused) map.evolve();
+            while (running)
+            {
+                if (!paused) 
+                {
+                    evolving = true;
+                    map.evolve();
+                    evolving = false; 
+                }
+            } 
         }, 
         std::ref(map), 
         districts,
         std::ref(paused),
+        std::ref(running),
         std::ref(evolving)
     }
 {
@@ -170,6 +181,7 @@ void MapBehavior::draw_info(engine& e)
     {
         { "Using: " + map.get_metric().get_name(), 32 },
         { paused ? "Paused" : "Running", 16 },
+        { "Ticks: " + std::to_string(ticks), 16 }
     };
     
     sf::Vector2f pos = { 0, 0 };
@@ -188,7 +200,6 @@ void MapBehavior::draw_info(engine& e)
 
 void MapBehavior::execute(engine& e)
 {
-
     switch (mode)
     {
     case DrawMode::Districts: 
@@ -245,12 +256,14 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         else if (event.key.code == sf::Keyboard::O) 
         {
             paused = true;
+            while (evolving) std::cout << "locked" << std::endl;
             map.set_metric(std::make_unique<PopulationMetric>());
             paused = false;
         }
         else if (event.key.code == sf::Keyboard::P) 
         {
             paused = true;
+            while (evolving) std::cout << "locked" << std::endl;
             map.set_metric(std::make_unique<CenteringMetric>());
             paused = false;
         }
@@ -273,6 +286,6 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
 
 MapBehavior::~MapBehavior()
 {
-    evolving = false;
+    running = false;
     evolver_thread.join();
 }

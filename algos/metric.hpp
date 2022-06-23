@@ -139,14 +139,17 @@ private:
 struct MetricGroup : public Metric 
 {
 public:
-    using BoolOp = std::function<bool(bool, bool)>;
+    std::vector<Metric> metrics;
+    std::vector<double> weights;
 
 public:
-    MetricGroup(const BoolOp& op, std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs); 
-    MetricGroup(std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs); 
+    MetricGroup();
     void clear() override;
 
     std::string get_name() const;
+
+public:
+    void add_metric(Metric &m, double weight);
 
 public:
     public: 
@@ -155,13 +158,6 @@ public:
 
 public:
     bool analyze(const vec2i& pos, const Node&, District district) override;
-
-private:
-    std::shared_ptr<Metric> lhs;
-    std::shared_ptr<Metric> rhs;
-
-    BoolOp op;
-
 };
 
 }

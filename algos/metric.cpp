@@ -361,40 +361,61 @@ std::string AlternatingMetric::get_name() const
     return upping ?  upper.get_name() : fixer.get_name();
 }
 
-MetricGroup::MetricGroup(const BoolOp& op, std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs) 
-    : op { op },  lhs { std::move( lhs ) }, rhs { std::move( rhs) }
-{
-}
-
-MetricGroup::MetricGroup(std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs) 
-    : MetricGroup(static_cast<BoolOp>([](auto a, auto b){return a&&b; }), std::move(lhs), std::move(rhs))
+MetricGroup::MetricGroup() 
+    : metrics{}, weights{}
 {
 }
 
 void MetricGroup::clear() 
 {
-    lhs->clear();
-    rhs->clear();
+    metrics.clear();
+    weights.clear();
 }
 
 std::string MetricGroup::get_name() const
 {
-    return lhs->get_name() + " and " + rhs->get_name();
+    std::string group = "Metric Group = [ ";
+
+    for (const Metric &m : metrics)
+    {
+        group += m.get_name() + ", ";
+    }
+
+    group += " ]";
+
+    return group;
+}
+
+void MetricGroup::add_metric(Metric &m, double weight)
+{
+    metrics.push_back(m);
+    weights.push_back(weight);
 }
 
 void MetricGroup::add_node(const vec2i& pos, const Node& node)
 {
-    lhs->add_node(pos, node);
-    rhs->add_node(pos, node);
+    for (Metric &m : metrics)
+    {
+        m.add_node(pos, node);
+    }
 }
 
 void MetricGroup::del_node(const vec2i& pos, const Node& node)
 {
-    rhs->del_node(pos, node);
-    lhs->del_node(pos, node);
+    for (Metric &m : metrics)
+    {
+        m.del_node(pos, node);
+    }
 }
 
 bool MetricGroup::analyze(const vec2i& pos, const Node& node, District district)
 {
-    return op(lhs->analyze(pos, node, district), rhs->analyze(pos, node, district));
+    double analysis = 0;
+
+    for (int i = 0; i < metrics.size(); i++)
+    {
+        analysis += weights[i] * (metrics[i].analyze(pos, node, district) ? 1 : -1);
+    }
+
+    return analysis > 0;
 }

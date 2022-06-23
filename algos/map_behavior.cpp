@@ -240,6 +240,20 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         {
             e.reset_camera();
         }
+
+        // TODO: this is duumb, make better swapping code
+        else if (event.key.code == sf::Keyboard::O) 
+        {
+            paused = true;
+            map.set_metric(std::make_unique<PopulationMetric>());
+            paused = false;
+        }
+        else if (event.key.code == sf::Keyboard::P) 
+        {
+            paused = true;
+            map.set_metric(std::make_unique<CenteringMetric>());
+            paused = false;
+        }
     }
 
     else if (event.type == sf::Event::MouseButtonPressed)

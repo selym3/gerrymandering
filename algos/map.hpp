@@ -142,6 +142,9 @@ public:
  * EVOLUTION *
  *************/ 
 
+public:
+    void set_metric(std::unique_ptr<Metric>&& metric);
+
 private:
     std::unique_ptr<Metric> metric;
     double _rate;

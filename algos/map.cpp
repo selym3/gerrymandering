@@ -61,6 +61,17 @@ Map::Map(std::unique_ptr<Metric>&& _metric, const Settings& settings, const Grid
     reset(districts);
 }
 
+void Map::set_metric(std::unique_ptr<Metric>&& _m)
+{
+    metric = std::move(_m);
+    metric->clear();
+    
+    for (const auto& [pos, node] : node_map)
+    {
+        metric->add_node(pos, node);
+    }
+}
+
 int Map::get_districts() const
 {
     return districts;

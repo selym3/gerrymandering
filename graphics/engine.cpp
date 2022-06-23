@@ -9,6 +9,12 @@ using namespace gl;
 camera& engine::get_camera() { return _camera; }
 const camera& engine::get_camera() const { return _camera; }
 
+void engine::reset_camera()
+{
+    auto [ w, h ] = get_window().getSize();
+    _camera = camera{ window {w, h}};
+}
+
 sf::RenderWindow& engine::get_window() { return _window; }
 const sf::RenderWindow& engine::get_window() const { return _window; }
 

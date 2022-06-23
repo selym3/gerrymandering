@@ -236,6 +236,10 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         {
             paused = !paused;
         }
+        else if (event.key.code == sf::Keyboard::R)
+        {
+            e.reset_camera();
+        }
     }
 
     else if (event.type == sf::Event::MouseButtonPressed)

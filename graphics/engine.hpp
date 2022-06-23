@@ -22,6 +22,7 @@ private:
 public: 
     camera& get_camera();
     const camera& get_camera() const;
+    void reset_camera();
 
     sf::RenderWindow& get_window();
     const sf::RenderWindow& get_window() const;

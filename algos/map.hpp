@@ -116,9 +116,9 @@ public:
     Map(std::unique_ptr<Metric>&& metric, const Settings& settings, const Grid& grid);
     // Map(Map&& rhs);
 
-/******************
- * INITIALIZATION *
- ******************/ 
+/*************
+ * RANDOMIZE *
+ *************/ 
 
 private:
     // District get_district(int index) const;
@@ -131,10 +131,8 @@ private:
     void assign_population(Party party, const vec2i& city, double radius, double max_population);
     void assign_population(int cities);
 
-private: 
     void find_borders();
 
-public:
     void reset(int districts);
 
 

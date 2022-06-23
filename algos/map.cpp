@@ -43,26 +43,39 @@ bool Map::will_island(const vec2i& v) const
 // const Populizer Map::random_population = [](auto a, auto b) { return random.next(0, 50); };
 // Factory Methods //
 
-Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{},
-             districts { 0 }, _rate { 0.1 }
-             //,  metric { std::make_shared<PartyPopulationMetric>(), std::make_shared<CenteringMetric>() }
-{
-}
+Map::Map(const Settings& settings, const Grid& grid) 
+    : node_map{}, node_layout{}, 
+      border_set{}, border_layout{},
 
-Map Map::make_grid(int width, int height)
+      districts { settings.districts }, _rate { settings.accept_bad_rate },
+    //   metric { std::make_unique<PopulationMetric>() }
+       metric { }
 {
-    Map map;
-
-    for (int y = 0; y < height; ++y) 
+    for (int y = 0; y < grid.height; ++y) 
     {
-        for (int x = 0; x < width; ++x)
+        for (int x = 0; x < grid.width; ++x)
         {
-            map.add_node(vec2i{x, y}, Node{ -1 });
+            add_node(vec2i{x, y}, Node{ -1 });
         }
     }
 
-    return map;
+    reset(districts);
 }
+
+int Map::get_districts() const
+{
+    return districts;
+}
+
+// Map::Map(Map&& rhs)
+// {
+//     std::cout << "penis " << std::endl;
+//     node_map = rhs.node_map;
+//     node_layout = rhs.node_layout;
+//     metric = std::move(rhs.metric);
+//     districts = rhs.districts;
+//     _rate = rhs._rate;
+// }
 
 // Nodes //
 
@@ -322,16 +335,16 @@ void Map::clear_population()
     }
 }
 
-Map& Map::reset(int districts)
+void Map::reset(int districts)
 {
     metric.clear();
     clear_population();
+
     assign_population(districts);
     randomize_voronoi(districts);
     // randomize_grid();
-    find_borders();
 
-    return *this;
+    find_borders();
 }
 
 // Evolution //

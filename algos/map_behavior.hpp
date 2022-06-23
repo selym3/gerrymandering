@@ -55,7 +55,7 @@ private:
 private:
     DrawMode mode;
 
-    const Map _og;
+    const Map::NodeMap _og;
     bool show_borders;
     std::vector<sf::Color> colors;
     int max_population;
@@ -65,7 +65,8 @@ private:
     vec2i get_mouse_cell(const gl::engine&) const;
 
 public:
-    MapBehavior(int districts);
+    MapBehavior(Map&& map);
+    // MapBehavior(const Map::Settings&, const Map::Grid&);
     ~MapBehavior();
 
 

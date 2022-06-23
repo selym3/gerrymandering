@@ -13,10 +13,10 @@ using namespace gl;
 #include "../util/make_hsv.hpp"
 
 
-MapBehavior::MapBehavior(int districts) :
-    map { Map::make_grid(200, 200).reset(districts) }, 
-    _og { map },
-    districts { districts },
+MapBehavior::MapBehavior(Map&& _map) :
+    map { std::forward<Map>(_map) }, 
+    _og { map.get_node_map() },
+    districts { map.get_districts() },
     colors {},
     show_borders { false },
     mode { DrawMode::Districts },
@@ -36,13 +36,13 @@ MapBehavior::MapBehavior(int districts) :
         std::ref(evolving)
     }
 {
-
     max_population = -1;
     for (const auto& [pos, node] : map.get_node_map())
     {
         if (node.get_population() > max_population)
             max_population = node.get_population();
     }
+
 
     for (int i = 0; i < districts;++i)
     {
@@ -69,7 +69,7 @@ vec2i MapBehavior::get_mouse_cell(const engine& e) const
     return mouse_cell;
 }
 
-void MapBehavior::draw_map(engine& e, const Map& map)
+void MapBehavior::draw_districts(engine& e)
 {
     // draw the entire map
     std::vector<sf::Vertex> cells;
@@ -81,19 +81,19 @@ void MapBehavior::draw_map(engine& e, const Map& map)
         else if (n.get_district() >= 0 && n.get_district() < districts)
             color = colors[n.get_district()];
 
-        draw_cell(e, cells, pos, color);
+        draw_cell(e, cells, pos, colors[n.get_district()]);
     }
     e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
-void MapBehavior::draw_districts(engine& e)
-{
-    draw_map(e, map);
-}
-
 void MapBehavior::draw_start(engine& e)
 {
-    draw_map(e, _og);
+    std::vector<sf::Vertex> cells;
+    for (const auto &[pos, n] : _og)
+    {
+        draw_cell(e, cells, pos, colors[n.get_district()]);
+    }
+    e.get_window().draw(cells.data(), cells.size(), sf::Quads);
 }
 
 void MapBehavior::draw_hovered(engine& e)
@@ -189,7 +189,7 @@ void MapBehavior::draw_info(engine& e)
 void MapBehavior::execute(engine& e)
 {
 
-    switch (mode)
+    switch (DrawMode::Districts)
     {
     case DrawMode::Districts: 
         draw_districts(e); 
@@ -230,7 +230,7 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         }
         else if (event.key.code == sf::Keyboard::A)
         {
-            mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))-1)%static_cast<std::size_t>(DrawMode::Count));
+            mode = static_cast<DrawMode>(((static_cast<std::size_t>(mode))+static_cast<std::size_t>(DrawMode::Count)-1)%static_cast<std::size_t>(DrawMode::Count));
         }
         else if (event.key.code == sf::Keyboard::Space)
         {

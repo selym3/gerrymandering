@@ -28,7 +28,20 @@ public:
 
 public:
     virtual bool analyze(const vec2i& pos, const Node& node, District district) = 0;
+
+// public:
+//     virtual Metric* clone() const = 0;
 };
+
+
+// template <typename Derived>
+// struct MetricHelper : public Metric
+// {
+//     Derived* clone() const 
+//     {
+//         return new Derived(static_cast<Derived const&>(*this));
+//     }
+// };
 
 struct PopulationMetric : public Metric
 {

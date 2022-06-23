@@ -34,6 +34,8 @@ public:
 
     void sanity_check();
 
+    using NodeMap = std::unordered_map<vec2i, Node, vec2i_hash>;
+
 /*********
  * NODES *
  *********/ 
@@ -41,6 +43,9 @@ private:
     std::unordered_map<vec2i, Node, vec2i_hash> node_map;
     std::vector<vec2i> node_layout;
     int districts;
+
+public:
+    int get_districts() const;
 
 
 private:
@@ -97,17 +102,19 @@ public:
     bool is_border(const vec2i& pos) const;
 
 
-/*******************
- * FACTORY METHODS *
- *******************/ 
-
+/****************
+ * CONSTRUCTORS *
+ ****************/ 
 public:
-    // static Map make_grid(int width, int height, const Populizer& populizer);
-    static Map make_grid(int width, int height);
+    // TODO: add add metric and initializer(?) to map settings struct
+    struct Settings {  int districts; double accept_bad_rate; };
 
-protected:
-    Map();
+    // ways to make maps
+    struct Grid { int width, height; };
 
+    // std::unique_ptr<Metric>&& metric
+    Map(const Settings& settings, const Grid& grid);
+    // Map(Map&& rhs);
 
 /******************
  * INITIALIZATION *
@@ -128,7 +135,7 @@ private:
     void find_borders();
 
 public:
-    Map& reset(int districts);
+    void reset(int districts);
 
 
 /*************
@@ -136,8 +143,7 @@ public:
  *************/ 
 
 private:
-    // MetricGroup metric;
-    AlternatingMetric metric;
+    PopulationMetric metric;
     double _rate;
 
 public:

@@ -2,6 +2,8 @@
 #define __METRIC_HPP__
 
 #include <unordered_map>
+#include <memory>
+#include <functional>
 
 #include "../util/vec2.hpp"
 #include "./node.hpp"
@@ -132,6 +134,34 @@ private:
     int up_period;
 
     Metric& get_metric();
+};
+
+struct MetricGroup : public Metric 
+{
+public:
+    using BoolOp = std::function<bool(bool, bool)>;
+
+public:
+    MetricGroup(const BoolOp& op, std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs); 
+    MetricGroup(std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs); 
+    void clear() override;
+
+    std::string get_name() const;
+
+public:
+    public: 
+    void add_node(const vec2i& pos, const Node& node) override;
+    void del_node(const vec2i& pos, const Node& node) override;
+
+public:
+    bool analyze(const vec2i& pos, const Node&, District district) override;
+
+private:
+    std::shared_ptr<Metric> lhs;
+    std::shared_ptr<Metric> rhs;
+
+    BoolOp op;
+
 };
 
 }

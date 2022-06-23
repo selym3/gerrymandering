@@ -1,6 +1,7 @@
 #include "./metric.hpp"
 #include <algorithm>
 #include <iostream>
+
 using namespace gm;
 
 // Base Metric
@@ -358,4 +359,42 @@ bool AlternatingMetric::analyze(const vec2i& pos, const Node& node, District dis
 std::string AlternatingMetric::get_name() const
 {
     return upping ?  upper.get_name() : fixer.get_name();
+}
+
+MetricGroup::MetricGroup(const BoolOp& op, std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs) 
+    : op { op },  lhs { std::move( lhs ) }, rhs { std::move( rhs) }
+{
+}
+
+MetricGroup::MetricGroup(std::shared_ptr<Metric>&& lhs, std::shared_ptr<Metric>&& rhs) 
+    : MetricGroup(static_cast<BoolOp>([](auto a, auto b){return a&&b; }), std::move(lhs), std::move(rhs))
+{
+}
+
+void MetricGroup::clear() 
+{
+    lhs->clear();
+    rhs->clear();
+}
+
+std::string MetricGroup::get_name() const
+{
+    return lhs->get_name() + " and " + rhs->get_name();
+}
+
+void MetricGroup::add_node(const vec2i& pos, const Node& node)
+{
+    lhs->add_node(pos, node);
+    rhs->add_node(pos, node);
+}
+
+void MetricGroup::del_node(const vec2i& pos, const Node& node)
+{
+    rhs->del_node(pos, node);
+    lhs->del_node(pos, node);
+}
+
+bool MetricGroup::analyze(const vec2i& pos, const Node& node, District district)
+{
+    return op(lhs->analyze(pos, node, district), rhs->analyze(pos, node, district));
 }

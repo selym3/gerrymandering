@@ -113,7 +113,7 @@ public:
     struct Grid { int width, height; };
 
     // std::unique_ptr<Metric>&& metric
-    Map(const Settings& settings, const Grid& grid);
+    Map(std::unique_ptr<Metric>&& metric, const Settings& settings, const Grid& grid);
     // Map(Map&& rhs);
 
 /******************
@@ -143,7 +143,7 @@ public:
  *************/ 
 
 private:
-    PopulationMetric metric;
+    std::unique_ptr<Metric> metric;
     double _rate;
 
 public:

@@ -43,13 +43,12 @@ bool Map::will_island(const vec2i& v) const
 // const Populizer Map::random_population = [](auto a, auto b) { return random.next(0, 50); };
 // Factory Methods //
 
-Map::Map(const Settings& settings, const Grid& grid) 
+Map::Map(std::unique_ptr<Metric>&& _metric, const Settings& settings, const Grid& grid) 
     : node_map{}, node_layout{}, 
       border_set{}, border_layout{},
 
       districts { settings.districts }, _rate { settings.accept_bad_rate },
-    //   metric { std::make_unique<PopulationMetric>() }
-       metric { }
+      metric { std::move(_metric) }
 {
     for (int y = 0; y < grid.height; ++y) 
     {
@@ -124,7 +123,7 @@ void Map::set_district(const vec2i& pos, District d)
     auto node = get_node(pos);
     if (!node.has_value()) return;
 
-    metric.move_node(pos, node->get(), d);
+    metric->move_node(pos, node->get(), d);
     node->get().set_district(d);
 }
 
@@ -245,7 +244,7 @@ void Map::randomize_grid()
             else        node->get().set_district((j > 50) ? 2 : 3);
 
             // node->get().set_population(Party{0}, 1); // Map::random.next(0, 50);
-            metric.add_node(pos, node->get());
+            metric->add_node(pos, node->get());
         }
     }
 }
@@ -282,14 +281,14 @@ void Map::randomize_voronoi(int districts)
         {
             // node.set_population(Party{0}, random.next(0, 50));
             node.set_district(min_district);
-            metric.add_node(position, node);
+            metric->add_node(position, node);
         }
     }
 
     // reset_metric();
 }
 
-const Metric& Map::get_metric() const { return metric; }
+const Metric& Map::get_metric() const { return *metric; }
 
 void Map::find_borders()
 {
@@ -337,7 +336,7 @@ void Map::clear_population()
 
 void Map::reset(int districts)
 {
-    metric.clear();
+    metric->clear();
     clear_population();
 
     assign_population(districts);
@@ -369,7 +368,7 @@ void Map::evolve(const vec2i& v)
         if (district == node.get_district()) continue;
         
 
-        bool should_flip = metric.analyze(v, node, district);
+        bool should_flip = metric->analyze(v, node, district);
         double funny_number = random.next(0.0, 1.0);
 
         if (should_flip || funny_number < _rate) 

@@ -14,7 +14,7 @@ using namespace gl;
 
 
 MapBehavior::MapBehavior(Map&& _map) :
-    map { std::forward<Map>(_map) }, 
+    map { std::move(_map) }, 
     _og { map.get_node_map() },
     districts { map.get_districts() },
     colors {},

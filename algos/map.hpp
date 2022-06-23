@@ -136,6 +136,7 @@ public:
  *************/ 
 
 private:
+    // MetricGroup metric;
     AlternatingMetric metric;
     double _rate;
 

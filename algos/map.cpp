@@ -44,7 +44,8 @@ bool Map::will_island(const vec2i& v) const
 // Factory Methods //
 
 Map::Map() : node_map{}, node_layout{}, border_set{}, border_layout{},
-             districts { 0 }, _rate { 0.8 }
+             districts { 0 }, _rate { 0.1 }
+             //,  metric { std::make_shared<PartyPopulationMetric>(), std::make_shared<CenteringMetric>() }
 {
 }
 
@@ -355,7 +356,10 @@ void Map::evolve(const vec2i& v)
         if (district == node.get_district()) continue;
         
 
-        if (metric.analyze(v, node, district) && random.next(0.0, 1.0) < _rate) 
+        bool should_flip = metric.analyze(v, node, district);
+        double funny_number = random.next(0.0, 1.0);
+
+        if (should_flip || funny_number < _rate) 
         {
             set_district(v, district);
             update_border(v);

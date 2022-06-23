@@ -28,7 +28,7 @@ MapBehavior::MapBehavior(Map&& _map) :
     running { true },
     evolver_thread
     {
-        [](Map& map, int districts, std::atomic<bool>& paused, std::atomic<bool>& running, std::atomic<bool>& evolving)
+        [](Map& map, int districts, std::atomic<bool>& paused, std::atomic<bool>& running, std::atomic<bool>& evolving, int& ticks)
         {
             while (running)
             {
@@ -36,6 +36,7 @@ MapBehavior::MapBehavior(Map&& _map) :
                 {
                     evolving = true;
                     map.evolve();
+                    ++ticks;
                     evolving = false; 
                 }
             } 
@@ -44,7 +45,8 @@ MapBehavior::MapBehavior(Map&& _map) :
         districts,
         std::ref(paused),
         std::ref(running),
-        std::ref(evolving)
+        std::ref(evolving),
+        std::ref(ticks)
     }
 {
     max_population = -1;

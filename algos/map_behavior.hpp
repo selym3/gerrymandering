@@ -20,7 +20,7 @@ namespace gm
 struct MapBehavior : public gl::behavior
 {
 private:
-    enum DrawMode 
+    enum class DrawMode
     {
         Districts,
         Start,

@@ -189,7 +189,7 @@ void MapBehavior::draw_info(engine& e)
 void MapBehavior::execute(engine& e)
 {
 
-    switch (DrawMode::Districts)
+    switch (mode)
     {
     case DrawMode::Districts: 
         draw_districts(e); 

@@ -6,7 +6,7 @@
 
 #include <memory>
 #include "./behavior.hpp"
-#include "./camera.hpp"
+#include "../util/camera.hpp"
 #include "../util/mouse.hpp"
 
 namespace gl

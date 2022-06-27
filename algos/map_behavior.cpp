@@ -257,17 +257,19 @@ void MapBehavior::handle_event(engine& e, const sf::Event& event)
         // TODO: this is duumb, make better swapping code
         else if (event.key.code == sf::Keyboard::O) 
         {
+            bool was_paused = paused;
             paused = true;
             while (evolving);
-            map.set_metric(std::make_unique<PopulationMetric>());
-            paused = false;
+            map.set_metric(std::make_unique<PartyPopulationMetric>());
+            if (!was_paused) paused = false;
         }
         else if (event.key.code == sf::Keyboard::P) 
         {
+            bool was_paused = paused;
             paused = true;
             while (evolving);
             map.set_metric(std::make_unique<CenteringMetric>());
-            paused = false;
+            if (!was_paused) paused = false;
         }
     }
 

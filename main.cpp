@@ -9,7 +9,7 @@ gm::Map get_map()
 {
     return gm::Map
     (
-        std::make_unique<gm::PopulationMetric>(),
+        std::make_unique<gm::PartyPopulationMetric>(),
         gm::Map::Settings{ 12, 0.1 },
         gm::Map::Grid{200, 200}
     );

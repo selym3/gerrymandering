@@ -4,7 +4,7 @@ Gerrymandering is the manipulation of district borders with the intent to favor 
 
 The goal of this project was to determine fair districts given a state and its voters. We represent a map as a grid of unit cells/nodes. Each of these nodes stores its district and voters.
 
-To find new districsts, we flip a random border node to a surrounding district. Before and after a random border node is flipped, we evaluate a fairness metric on the entire map. If this border flip makes the map more fair according to the metric, it is saved. If it doesn't then there is only a small chance the border will remain flipped (the chance that it can be flipped regardless is important for not converging too quickly onto a map configuration).
+To find new districts, we flip a random border node to a surrounding district. Before and after a random border node is flipped, we evaluate a fairness metric on the entire map. If this border flip makes the map more fair according to the metric, it is saved. If it doesn't then there is only a small chance the border will remain flipped (the chance that it can be flipped regardless is important for not converging too quickly onto a map configuration).
 
 The initial districts are determined by a voronoi tessellation. Afterwords, the border flip algorithm is run repeatedly in order to take advantage of the metric on the entire map.
 
@@ -70,7 +70,6 @@ An interesting idea we initially had was to explore how districting algorithms (
 * `Click` to receive information on a node
 * `Click + Drag` to pan
 * `Mouse Wheel` to zoom
-
 
 ## Screenshots
 

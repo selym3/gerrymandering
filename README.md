@@ -68,3 +68,8 @@ Also code we started but never finished dealt with saving evolutions and maps so
 * `Click` to receive information on a node
 * `Click + Drag` to pan
 * `Mouse Wheel` to zoom
+
+
+## Screenshots
+
+![Program in action](images/screenshot1.png)

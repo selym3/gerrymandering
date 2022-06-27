@@ -36,9 +36,11 @@ Settling on this method of redistricting was also a challenge. We started with m
 
 Resolving the challenges (real data, border nodes, GUI-elements, tuned metrics). Improving how the code resolves switching metrics (requires passing along all the nodes, which somewhat defeats the purpose of running metrics).
 
-An interesting idea we initially had was to explore how districting algorithms (and this idea came up again for metrics) can be applied to populations with more than 2 significant parties. We never got the chance to explore this.
-
 Also code we started but never finished dealt with saving evolutions and maps so they could be played back. This would be cool, but wasn't a priority.
+
+We should add a simple way to tell if the map is getting better (like displaying the % of the population that votes for a party vs. the districts each party wins).
+
+An interesting idea we initially had was to explore how districting algorithms (and this idea came up again for metrics) can be applied to populations with more than 2 significant parties. We never got the chance to explore this.
 
 ## Requirements
 

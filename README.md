@@ -56,12 +56,12 @@ Also code we started but never finished dealt with saving evolutions and maps so
 
 ### Keys
 
-* `W` to toggle displaying borders *(may change soon)*
+* `W` to toggle displaying borders
 * `D` to switch display mode
 * `Space` to toggle evolving (pausing)
 * `R` to reset camera
-* `O` to use party population metric *(may change soon)*
-* `P` to use centering metric *(may change soon)*
+* `O` to use party population metric
+* `P` to use centering metric
 
 ### Mouse
 

@@ -18,7 +18,7 @@ The same idealogy is adopted for metrics. However, we knew we would want to impl
 
 We demonstrated with two metrics: one that simulates the outcome of an election in the current configuration and one that favors moving nodes closer to their district's center of population. The combination of a population-oriented and shape-oriented metric should create fair and believable districts.
 
-To display the map, we simply generate a color for each district. We also draw the map is several other ways, including a population map and a centroid map.
+To display the map, we simply generate a color for each district. We also draw the map in several other ways, including a population map and a centroid map.
 
 ## Challenges
 
